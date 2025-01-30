@@ -1,0 +1,35 @@
+<RCC>
+  <qresource prefix="/plugins/StaraMaps">
+    <file>no-mundo-todo.png</file>
+    <file>setas-para-cima.png</file>
+    <file>voltar.png</file>
+    <file>sinal-de-adicao.png</file>
+    <file>verifica.png</file>
+    <file>minimizar.png</file>
+    <file>maximizar.png</file>
+    <file>espacamento-entre-linhas.png</file>
+    <file>menor.png</file>
+    <file>maior-que.png</file>
+    <file>ponto-de-interrogacao-gray.png</file>
+    <file>ponto-de-interrogacao.png</file>
+    <file>botao-adicionar_gray.png</file>
+    <file>excluir_gray.png</file>
+    <file>excluir.png</file>
+    <file>botao-adicionar.png</file>
+    <file>imagem.png</file>
+    <file>upload1.png</file>
+    <file>seta-esquerda.png</file>
+    <file>de-volta.png</file>
+    <file>options.png</file>
+    <file>reset.png</file>
+    <file>down_disabled.png</file>
+    <file>down.png</file>
+    <file>Roboto-Regular.ttf</file>
+    <file>tick.png</file>
+    <file>MicrosoftTeams-image.png</file>
+    <file>back.png</file>
+    <file>close.png</file>
+    <file>icon.png</file>
+    <file>upload.png</file>
+  </qresource>
+</RCC>
