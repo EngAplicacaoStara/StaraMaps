@@ -12,12 +12,9 @@ StaraMaps is a QGIS plugin designed to simplify the use of functions and enhance
 
 ## Installation
 
-1. Clone the plugin repository:
-   ```sh
-   git clone https://github.com/EngAplicacaoStara/StaraMaps.git
-   ```
-2. Copy the plugin folder to the QGIS plugins directory.
-3. Open QGIS, go to the **Plugin Manager**, activate StaraMaps, and start using it!
+1. Open QGIS
+2. Go to the **Plugin Manager**
+3. Download, activate StaraMaps, and start using it!
 
 ## How to Use
 
