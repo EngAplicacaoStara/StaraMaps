@@ -97,7 +97,8 @@ class ManageZones(QObject):
         self.change_values.on_finished.connect(lambda list_to_up: (
             self.loading_manage.stop(),
             self.loading_manage.deleteLater(),
-            self.create_new_layer(list_to_up),
+            self.main.on_layer_update_feat(list_to_up),
+            #self.create_new_layer(list_to_up),
             upgrade_grid(self.main.layer, self.main.iface, self.index, classes=len(items)),
             self.on_update()
         ))

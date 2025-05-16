@@ -9,6 +9,8 @@ from qgis._core import QgsLayerTree, QgsVectorLayer, QgsStyle, QgsGraduatedSymbo
     QgsGeometry, QgsProject
 from qgis._gui import QgsMapToolEmitPoint, QgsRubberBand, QgsVertexMarker
 from qgis.core import NULL, edit
+from qgis.utils import iface
+from qgis.core import Qgis
 
 LOG = True
 
@@ -1459,5 +1461,5 @@ class ResetLayer(QThread):
 
             self.finished_signal.emit(new_layer, self.tree)
         else:
-            print_log(self, self.run, msg='Arquivo não existe!')
+            iface.messageBar().pushMessage('Arquivo não existe!', level=Qgis.Critical, duration=5)
             self.finished_fail.emit()
