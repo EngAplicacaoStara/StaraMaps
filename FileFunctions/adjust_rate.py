@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSlot
 from qgis._core import QgsAggregateCalculator
 
-from ..map_canvas import RateMapCanvas
+from canvas.map_canvas import RateMapCanvas
 from ..qgisFuncs import upgrade_grid, add_buttons_to_grid
 from ..values_window import BiggerValues, SmallerValues, BetweenValues, ChangeMValues
 

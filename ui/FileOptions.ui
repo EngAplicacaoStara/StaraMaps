@@ -145,6 +145,21 @@ QPushButton{
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QGridLayout" name="gridLayout">
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item row="0" column="0">
                  <widget class="QPushButton" name="pushButtonExport">
                   <property name="minimumSize">
@@ -577,6 +592,51 @@ QPushButton:disabled{
                   </property>
                   <property name="text">
                    <string>VALOR GERAL</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButtonCreateField">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>150</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+	border:  2px solid rgb(243, 116, 53);	
+	color:  rgb(243, 116, 53);
+	border-radius: 5px;
+	font: 12pt url(:/plugins/StaraMaps/Roboto-Regular.ttf);
+}
+
+
+QPushButton::hover{
+	background-color: rgb(233, 106, 43);
+	color: rgb(250, 250, 250);
+}
+
+QPushButton::pressed{
+	background-color: rgb(223, 96, 33);
+	color: rgb(250, 250, 250);
+}
+QPushButton:disabled{
+	border: 2px solid rgba(100, 100, 100, 40);
+	color: rgb(100, 100, 100, 40);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>CRIAR BORD.</string>
                   </property>
                  </widget>
                 </item>
@@ -1059,7 +1119,7 @@ QScrollBar::sub-line:vertical {
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>92</width>
+                               <width>52</width>
                                <height>49</height>
                               </rect>
                              </property>
@@ -1247,7 +1307,7 @@ QScrollBar::sub-line:vertical {
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>92</width>
+                               <width>56</width>
                                <height>49</height>
                               </rect>
                              </property>
@@ -2386,7 +2446,7 @@ QPushButton::pressed{
           <item>
            <widget class="QStackedWidget" name="stackedWidget_3">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="page_24">
              <layout class="QVBoxLayout" name="verticalLayout_49">
@@ -3370,7 +3430,7 @@ QLineEdit:disabled{
                 <item>
                  <widget class="QStackedWidget" name="stackedWidget_interpolate">
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="page_14">
                    <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -4070,8 +4130,8 @@ QScrollBar::sub-line:vertical {
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>360</width>
-                         <height>401</height>
+                         <width>73</width>
+                         <height>16</height>
                         </rect>
                        </property>
                        <property name="styleSheet">
@@ -5082,8 +5142,8 @@ QScrollBar::sub-line:vertical {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>100</width>
-                     <height>30</height>
+                     <width>370</width>
+                     <height>411</height>
                     </rect>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -5136,6 +5196,137 @@ QScrollBar::sub-line:vertical {
                </layout>
               </widget>
              </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page_26">
+         <layout class="QVBoxLayout" name="verticalLayout_52">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frame_42">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="pushButton_return_create_field">
+               <property name="minimumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+	border: none;
+	image: url(:/plugins/StaraMaps/back.png);
+}
+QPushButton:disabled{
+	border: 2px solid rgba(100, 100, 100, 40);
+	color: rgb(100, 100, 100, 40);
+}</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_taxas_2">
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Criar Bordadura</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_43">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_53">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
             </layout>
            </widget>
           </item>

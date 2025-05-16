@@ -597,7 +597,8 @@ class AddNewColumn(ChangeValues):
         list_feat_to_update = {}
 
         for feat in features:
-            list_feat_to_update[feat.id()] = {self.field_index: self.value}
+            list_feat_to_update[feat.id()] = {
+                self.field_index: int(self.value) if self.value.isnumeric() else self.value}
             value = (progress_count / feat_count) * 100
             self.on_percent_update.emit(float("%.2f" % value))
             # time.sleep(0.001)
@@ -1294,7 +1295,7 @@ class CanvasEventFilter(QObject):
 
 
 class PolyMapTool(QgsMapToolEmitPoint):
-    click_signal = pyqtSignal(bool)
+    click_signal = pyqtSignal()
 
     def __init__(self, canvas):
         self.canvas = canvas
@@ -1324,7 +1325,7 @@ class PolyMapTool(QgsMapToolEmitPoint):
         self.points.append(m)
         self.isEmittingPoint = True
         self.showPoly()
-        self.click_signal.emit(len(self.green_points) != 0)
+        self.click_signal.emit()
 
     def showPoly(self):
         for g_p in self.green_points:
@@ -1348,9 +1349,10 @@ class PolyMapTool(QgsMapToolEmitPoint):
         self.points.clear()
         self.green_points.clear()
         self.rubberband.show()
-        self.click_signal.emit(len(self.green_points) != 0)
+        self.click_signal.emit()
 
     def get_points(self):
+
         self.pt_idx = QgsSpatialIndex(self.canvas.layer(0).getFeatures())
         if self.points:
             points = [point.current_point for point in self.points]
@@ -1364,6 +1366,16 @@ class PolyMapTool(QgsMapToolEmitPoint):
 
         self.reset()
         return value, geo
+
+    def get_only_points(self):
+        if self.points:
+            points = [point.current_point for point in self.points]
+            geo = QgsGeometry.fromPolygonXY([points])
+
+        else:
+            geo = QgsGeometry.fromPolygonXY([])
+
+        return geo
 
 
 class CustomDockTitleBar(QWidget):

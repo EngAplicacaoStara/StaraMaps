@@ -57,6 +57,9 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setupUi(self)
 
+
+
+
         # idiomas
         self.label.setText(self.tr('Arraste e solte o arquivo'))
         self.label_2.setText(self.tr('ou'))
@@ -78,6 +81,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.project.layersAdded.connect(self.addSignalFromQGis)
         self.project.layersRemoved.connect(self.delete_signal_from_qgis)
         self.pushButton_map.clicked.connect(self.terrain_state)
+
 
         self.pushButtonBack.hide()
 
@@ -397,6 +401,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
                               self.project,
                               self.iface,
                               wid_itens,
+                              self,
                               parent=self.stackedWidget.widget(1))
         ''' Apenas habilitar unir mapas se houver mais de um mapa importado'''
         if len(itens) < 2:
@@ -450,10 +455,10 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         file.addLayerOnQGis(tree)
         upgrade_grid(layer, self.iface)
 
-    def add_new_file_to_list_widget(self, path, file_extencion=False):
+    def add_new_file_to_list_widget(self, path, file_extension=False):
 
         item = QtWidgets.QListWidgetItem()
-        file = FileWidget(item, path, self.project, iface=self.iface, file_extencion=file_extencion)
+        file = FileWidget(item, path, self.project, iface=self.iface, file_extencion=file_extension)
 
         item.setSizeHint(QSize(394, 80))
         file.optionsSignal.connect(self.openItemOnQGis)

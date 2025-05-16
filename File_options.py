@@ -17,6 +17,7 @@ from qgis._core import QgsLayerTreeGroup, QgsField, QgsVectorFileWriter, QgsVect
     QgsLayoutItemPolygon, QgsFillSymbol, QgsLayoutItemPage, QgsMapSettings, QgsRectangle, QgsLayoutItemPicture, \
     QgsLayoutExporter, QgsLayoutItemMapGrid, QgsLayoutItemScaleBar
 
+from FileFunctions.create_field import CreateField
 from .FileFunctions.adjust_average import AdjustAverage
 from .FileFunctions.adjust_rate import Rate
 from .FileFunctions.edit_columns import EditColumns
@@ -476,7 +477,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
     back_animation_signal = pyqtSignal()
     test_signal = pyqtSignal(object)
 
-    def __init__(self, file_widget: FileWidget, project, iface, itens, parent=None):
+    def __init__(self, file_widget: FileWidget, project, iface, itens, main, parent=None):
         super(FileOptions, self).__init__(parent)
         self.pdf_thread = None
         self.file_name = None
@@ -522,6 +523,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         self.project = project
         self.iface = iface
         self.itens = itens
+        self.main = main
         self.layer = None
         self.layer_name = ''
         self.layer_to_uni = None
@@ -542,6 +544,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         self.pushButtonInterpolate.clicked.connect(lambda: Interpolate(self))
         self.pushButtonChangeMean.clicked.connect(lambda: AdjustAverage(self))
         self.pushButtonManejo.clicked.connect(lambda: ManageZones(self))
+        self.pushButtonCreateField.clicked.connect(lambda: CreateField(self))
 
         InfoButton(self.messages.tax_info(), self.pushButtonChangeMean)
         InfoButton(self.messages.interpolate_info(), self.pushButtonInterpolate)

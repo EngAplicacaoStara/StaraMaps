@@ -1,3 +1,4 @@
+import importlib
 import os
 import subprocess
 import sys
@@ -21,6 +22,30 @@ class InstallThread(QThread):
         super().__init__()
         self.__file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements.txt')
 
+    @staticmethod
+    def get_python_executable():
+
+        paths = [
+            r"C:\Program Files\QGIS 3.34\bin\python-qgis.bat"
+        ]
+        for path in paths:
+            if os.path.exists(path):
+                return path
+        return None
+
+    def ensure_package_installed(self, package_name):
+        python_exec = self.get_python_executable()
+        if not python_exec:
+            self.info_signal.emit(f'Python Path not found...')
+            #iface.messageBar().pushCritical("Erro", "Não foi possível localizar o interpretador Python do QGIS.")
+            return
+
+        try:
+            subprocess.run([python_exec, "-m", "pip", "install", package_name], check=True)
+        except subprocess.CalledProcessError:
+            self.info_signal.emit(f'Error {package_name}...')
+            #iface.messageBar().pushCritical("Erro", f"Falha ao instalar o pacote '{package_name}'")
+
     def run(self) -> None:
         si = subprocess.STARTUPINFO()
         si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -32,11 +57,11 @@ class InstallThread(QThread):
 
             for d in requirements:
                 try:
-                    __import__(d)
+                    importlib.import_module(d)
                     self.info_signal.emit(f'{d} já instalado')
                 except:
                     self.info_signal.emit(f'Instalando {d}...')
-                    subprocess.Popen(['python3', '-m', 'pip', 'install', d], startupinfo=si)
+                    self.ensure_package_installed(d)
         else:
             print(f'{self.__file} não encontrado.')
 

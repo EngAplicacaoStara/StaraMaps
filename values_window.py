@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis._core import QgsField
 
 from .loading import Loading
-from .message import Message, Messages
+from message import Message, Messages
 from .qgisFuncs import RemoveBiggerValues, RemoveSmallerValues, RemoveBetweenValues, ChangeMapValues, ChangeMean, \
     AddNewColumn
 
@@ -60,7 +60,7 @@ class ValuesWindow(QWidget, FORM_CLASS):
 
     @pyqtSlot(float)
     def on_percent_update(self, value):
-        self.progressBar.setValue(value)
+        self.progressBar.setValue(int(value))
 
 
 class BiggerValues(ValuesWindow):
@@ -337,6 +337,7 @@ class ColumnValues(ValuesWindow):
             self.m.show()
             return
 
+        print(text_1)
         if text_1.isnumeric():
             self.m = Message(Messages.only_numeric(self), self)
             self.m.show()

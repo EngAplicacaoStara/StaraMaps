@@ -26,9 +26,7 @@
    <string>StaraMaps</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#StaraMapsDialogBase{
-	background-color: transparent;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
    <property name="spacing">

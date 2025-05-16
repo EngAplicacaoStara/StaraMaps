@@ -105,7 +105,7 @@ class StaraMaps:
         :param message: String for translation.
         :type message: str, QString
 
-        :returns: Translated version of message.
+        :returns: Translated version of custom_message.
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass

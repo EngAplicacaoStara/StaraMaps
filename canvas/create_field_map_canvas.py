@@ -1,6 +1,7 @@
 import os
 
 from canvas.map_canvas_refactor import MapCanvasRefactor
+from typing import override
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis._core import QgsVectorLayer, QgsFeature, QgsVectorFileWriter, QgsProject
 
@@ -33,6 +34,7 @@ class CreateFieldMapCanvas(MapCanvasRefactor):
         self.canvasInterpolate.setLayers([self.R_layer])
         self.check_points()
 
+    @override
     def on_ok_PushButtonCanvas_clicked(self):
         self.field_name_widget.setFixedSize(self.size())
         self.field_name_widget.show()

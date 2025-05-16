@@ -44,7 +44,7 @@ def main(parameters, arguments):
         print("URL: %s" % hide_password(err.url, 0))
         print("HTTP/HTTPS headers: %s" % err.headers)
         print("Error code: %d" % err.errcode)
-        print("Error message: %s" % err.errmsg)
+        print("Error custom_message: %s" % err.errmsg)
     except Fault as err:
         print("A fault occurred")
         print("Fault code: %d" % err.faultCode)

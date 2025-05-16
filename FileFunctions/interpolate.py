@@ -1,14 +1,15 @@
 import os
 
 import processing
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtWidgets import QPushButton, QFileDialog
+from qgis.PyQt.QtCore import QObject, pyqtSlot
+from qgis.PyQt.QtWidgets import QPushButton, QFileDialog
 from qgis._analysis import QgsInterpolator, QgsIDWInterpolator, QgsGridFileWriter
 from qgis._core import QgsVectorLayer, QgsApplication, QgsTask, QgsWkbTypes, QgsProcessingFeatureSourceDefinition, \
     QgsFeatureRequest, QgsVectorFileWriter, QgsCoordinateTransformContext
 
+from canvas.interpolate_map_canvas import InterpolateMapCanvas
 from ..loading import Loading
-from ..map_canvas import InterpolateMapCanvas
+
 from ..qgisFuncs import upgrade_grid, MyFeedBack, remove_file, list_groups_linked_to_layer, add_buttons_to_grid, \
     same_file
 
