@@ -595,10 +595,9 @@ class AddNewColumn(ChangeValues):
         feat_count = len(features)
         progress_count = 0
         list_feat_to_update = {}
-
         for feat in features:
             list_feat_to_update[feat.id()] = {
-                self.field_index: int(self.value) if self.value.isnumeric() else self.value}
+                self.field_index: self.value}
             value = (progress_count / feat_count) * 100
             self.on_percent_update.emit(float("%.2f" % value))
             # time.sleep(0.001)

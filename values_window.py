@@ -337,7 +337,6 @@ class ColumnValues(ValuesWindow):
             self.m.show()
             return
 
-        print(text_1)
         if text_1.isnumeric():
             self.m = Message(Messages.only_numeric(self), self)
             self.m.show()
@@ -349,17 +348,33 @@ class ColumnValues(ValuesWindow):
         self.check_progress()
         self.back_button.setEnabled(False)
 
-        if text_1.isnumeric():
-            area_field = QgsField(int(text_1), QVariant.Int)
+        existing_fields = [field.name() for field in self.layer.fields()]
+        if text_1 in existing_fields:
+            self.m = Message(f"O campo '{text_1}' já existe.", self)
+            self.m.show()
+            return
+
+        if text_2.isnumeric():
+            area_field = QgsField(text_1, QVariant.Int)
         else:
             area_field = QgsField(text_1, QVariant.String)
 
+        self.layer.startEditing()
         self.layer.dataProvider().addAttributes([area_field])
         self.layer.updateFields()
 
         idx = self.layer.dataProvider().fieldNameIndex(text_1)
+        field_type = self.layer.fields()[idx].type()
+
+        if field_type in [QVariant.Int, QVariant.LongLong]:
+            converted_value = int(text_2)
+        elif field_type == QVariant.Double:
+            converted_value = float(text_2)
+        else:
+            converted_value = str(text_2)
+
         features = self.layer.getFeatures()
-        self.n_c = AddNewColumn(features, idx, text_2)
+        self.n_c = AddNewColumn(features, idx, converted_value)
         self.n_c.on_finished.connect(
             lambda x: (
                 self.update_features_signal.emit(x),
