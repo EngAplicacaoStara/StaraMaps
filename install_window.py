@@ -27,18 +27,15 @@ class InstallThread(QThread):
 
     @staticmethod
     def get_python_executable():
-        full_version = Qgis.QGIS_VERSION  # Ex: '3.34.11-Prizren'
-        qgis_version = full_version.split('-')[0]  # '3.34.11'
+        qgis_bin_dir = os.path.dirname(sys.executable)
+        candidates = ["python-qgis.bat", "python-qgis-ltr.bat"]
 
-        paths = [
-            fr"C:\Program Files\QGIS {qgis_version}\bin\python-qgis-ltr.bat",
-            fr"C:\Program Files\QGIS {qgis_version}\bin\python-qgis.bat"
-        ]
-        for path in paths:
-            if os.path.exists(path):
-                return path
+        for candidate in candidates:
+            candidate_path = os.path.join(qgis_bin_dir, candidate)
+            if os.path.exists(candidate_path):
+                return candidate_path
+
         return None
-
     def ensure_package_installed(self, package_name):
 
         python_exec = self.get_python_executable()

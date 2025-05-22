@@ -558,6 +558,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         InfoButton(self.messages.general_info(), self.pushButtonGen_value)
         InfoButton(self.messages.manage_zones(), self.pushButtonManejo)
         InfoButton(self.messages.column_info(), self.pushButtonColumn)
+        InfoButton(self.messages.create_field_info(), self.pushButtonCreateField)
 
     @pyqtSlot(object)
     def on_layer_update_feat(self, features):

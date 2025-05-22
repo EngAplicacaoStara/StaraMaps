@@ -18,6 +18,7 @@ class FieldName(QWidget, FORM_CLASS):
         super(FieldName, self).__init__(parent.dock)
         self.setupUi(self)
         self.goButton.clicked.connect(self.on_go_clicked)
+        self.cancelButton.clicked.connect(self.hide)
 
     def on_go_clicked(self):
         # Check Name Field
@@ -27,3 +28,5 @@ class FieldName(QWidget, FORM_CLASS):
             return
         self.hide()
         self.on_click_accept.emit(self.lineEdit.text())
+
+

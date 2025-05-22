@@ -155,6 +155,9 @@ class MapCanvasRefactor(QWidget, FORM_CLASS):
     def on_maximize_PushButtonCanvas_clicked(self):
         self.__check_dock()
 
+    def force_close_dock(self):
+        self.dock.setFloating(False)
+
     @pyqtSlot()
     def on_ok_PushButtonCanvas_clicked(self):
         raise NotImplementedError('not implemented')

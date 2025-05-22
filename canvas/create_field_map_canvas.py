@@ -20,7 +20,6 @@ class CreateFieldMapCanvas(MapCanvasRefactor):
 
         self.field_name_widget = FieldName(self)
         self.field_name_widget.on_click_accept.connect(self.create_new_layer)
-        #self.field_name_widget.setFixedSize(300, 150)
 
         self.field_name_widget.hide()
 
@@ -34,6 +33,7 @@ class CreateFieldMapCanvas(MapCanvasRefactor):
         self.check_points()
 
     def on_ok_PushButtonCanvas_clicked(self):
+        self.force_close_dock()
         self.field_name_widget.setFixedSize(self.size())
         self.field_name_widget.show()
 

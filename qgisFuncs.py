@@ -830,6 +830,28 @@ class TextInfoTest(QObject):
             self.tr('2º - Adicione o valor da nova média.'),
             self.tr('3º - Clique em Avançar e os valores serão ajustados.')
         )
+    def create_field_info(self) -> str:
+        return """
+                <html>
+                    <b>{}</b>
+                    </br>
+                    <p>{}</p>
+                    <ul>
+                        <li>{}</li>
+                        <li>{}</li>
+                        <li>{}</li>
+                        <li>{}</li>
+                    </ul>
+                </html>
+                """.format(
+            self.tr('Criar Bordadura'),
+            self.tr(
+                'Função que cria um nova área a partir da localização de outra área próxima.'),
+            self.tr('1° - Faça o contorno da área que deseja criar.'),
+            self.tr('2º - Clique no botão confirmar'),
+            self.tr('3º - Digite o nome'),
+            self.tr('4º - Clique em avançar')
+        )
 
     def column_info(self) -> str:
         return """
