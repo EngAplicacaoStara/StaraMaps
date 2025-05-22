@@ -1119,8 +1119,8 @@ QScrollBar::sub-line:vertical {
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>140</width>
-                               <height>200</height>
+                               <width>52</width>
+                               <height>49</height>
                               </rect>
                              </property>
                              <property name="styleSheet">
@@ -1307,8 +1307,8 @@ QScrollBar::sub-line:vertical {
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>140</width>
-                               <height>200</height>
+                               <width>56</width>
+                               <height>49</height>
                               </rect>
                              </property>
                              <property name="styleSheet">
@@ -2043,6 +2043,9 @@ QPushButton:disabled{
                     </item>
                     <item row="1" column="1">
                      <widget class="QPushButton" name="pushButtonExport_vrc">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
                       <property name="minimumSize">
                        <size>
                         <width>150</width>
@@ -2478,8 +2481,8 @@ QPushButton::pressed{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>370</width>
-                   <height>366</height>
+                   <width>100</width>
+                   <height>16</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -3176,8 +3179,8 @@ QScrollBar::sub-line:vertical {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>360</width>
-                     <height>371</height>
+                     <width>90</width>
+                     <height>16</height>
                     </rect>
                    </property>
                    <property name="styleSheet">
@@ -3487,8 +3490,8 @@ QScrollBar::sub-line:vertical {
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>360</width>
-                         <height>401</height>
+                         <width>90</width>
+                         <height>16</height>
                         </rect>
                        </property>
                        <property name="styleSheet">
