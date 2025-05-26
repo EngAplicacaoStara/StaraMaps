@@ -13,7 +13,7 @@ email=engaplicacao@stara.com.br
 about=Provide a brief description of the plugin and its purpose.
 
 tracker=http://stara.com.br/
-repository=http://stara.com.br/
+repository=https://github.com/EngAplicacaoStara/StaraMaps.git
 # End of mandatory metadata
 
 # Recommended items:
