@@ -7,7 +7,7 @@ from qgis._analysis import QgsInterpolator, QgsIDWInterpolator, QgsGridFileWrite
 from qgis._core import QgsVectorLayer, QgsApplication, QgsTask, QgsWkbTypes, QgsProcessingFeatureSourceDefinition, \
     QgsFeatureRequest, QgsVectorFileWriter, QgsCoordinateTransformContext
 
-from canvas.interpolate_map_canvas import InterpolateMapCanvas
+from ..canvas.interpolate_map_canvas import InterpolateMapCanvas
 from ..loading import Loading
 
 from ..qgisFuncs import upgrade_grid, MyFeedBack, remove_file, list_groups_linked_to_layer, add_buttons_to_grid, \

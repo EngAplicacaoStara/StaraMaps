@@ -26,14 +26,14 @@ import pathlib
 import sys
 
 import requests
-from PyQt5.QtCore import QAbstractAnimation, QPropertyAnimation, QSequentialAnimationGroup, QSize, \
+from qgis.PyQt.QtCore import QAbstractAnimation, QPropertyAnimation, QSequentialAnimationGroup, QSize, \
     QEasingCurve, Qt, \
     QPoint, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QFileDialog, QApplication, QGraphicsDropShadowEffect, QGraphicsOpacityEffect
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QFileDialog, QApplication, QGraphicsDropShadowEffect, QGraphicsOpacityEffect
 from qgis.PyQt import QtWidgets
 from qgis.PyQt import uic
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer, QgsVectorLayer
 from qgis.utils import iface
 
 from .File_widget import FileWidget
@@ -71,12 +71,12 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         try:
             self.project.layersAdded.disconnect()
         except Exception as e:
-            self.iface.messageBar().pushWarning(e)
+            self.iface.messageBar().pushWarning("Aviso", str(e))
 
         try:
             self.project.layersRemoved.disconnect()
         except Exception as e:
-            self.iface.messageBar().pushWarning(e)
+            self.iface.messageBar().pushWarning("Aviso", str(e))
 
         self.project.layersAdded.connect(self.addSignalFromQGis)
         self.project.layersRemoved.connect(self.delete_signal_from_qgis)
@@ -436,9 +436,10 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.checkhavefiles()
         file.addLayerOnQGis(tree)
 
-    @pyqtSlot(object, list)
-    def add_replace_layer(self, layer, tree):
-        layer_path = layer.dataProvider().dataSourceUri()
+    @pyqtSlot(str, list)
+    def add_replace_layer(self, layer_path, tree):
+        layer_name = os.path.splitext(os.path.basename(layer_path))[0]
+        layer = QgsVectorLayer(os.path.abspath(layer_path), layer_name, "ogr")
         item = QtWidgets.QListWidgetItem()
         file = FileWidget(item=item,
                           path=layer_path,

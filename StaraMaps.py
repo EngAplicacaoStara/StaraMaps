@@ -30,7 +30,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis._core import QgsLayerTreeGroup
-from qgis.core import QgsProject, QgsRasterLayer
+from qgis.core import Qgis, QgsProject, QgsRasterLayer
 
 from .StaraMaps_dialog import StaraMapsDialog
 
@@ -188,6 +188,16 @@ class StaraMaps:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
+        min_version = 34000  # QGIS 3.40
+        if Qgis.QGIS_VERSION_INT < min_version:
+            self.iface.messageBar().pushCritical(
+                'StaraMaps',
+                self.tr(u'Este plugin requer QGIS 3.40 ou superior. '
+                        u'Versão atual: {}').format(Qgis.QGIS_VERSION)
+            )
+            self.first_start = False
+            return
+
         icon_path = ':/plugins/StaraMaps/MicrosoftTeams-image.png'
         self.add_action(
             icon_path,
@@ -264,6 +274,9 @@ class StaraMaps:
 
     def run(self):
         """Run method that performs all the real work"""
+
+        if not self.actions:
+            return  # initGui blocked due to incompatible QGIS version
 
         QCoreApplication.installTranslator(self.translator)
 

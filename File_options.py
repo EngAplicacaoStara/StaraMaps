@@ -6,18 +6,18 @@ from pathlib import Path
 
 import utm
 from PIL import Image
-from PyQt5.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize
-from PyQt5.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon
-from PyQt5.QtWidgets import QFileDialog, QPushButton
+from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize
+from qgis.PyQt.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon
+from qgis.PyQt.QtWidgets import QFileDialog, QPushButton
 from qgis.PyQt import QtWidgets
 from qgis.PyQt import uic
-from qgis._core import QgsLayerTreeGroup, QgsField, QgsVectorFileWriter, QgsVectorLayer, QgsPrintLayout, \
+from qgis._core import Qgis, QgsLayerTreeGroup, QgsField, QgsVectorFileWriter, QgsVectorLayer, QgsPrintLayout, \
     QgsLayoutItemMap, \
     QgsLayoutPoint, QgsUnitTypes, QgsLayoutSize, QgsLayoutItemLabel, \
     QgsLayoutItemPolygon, QgsFillSymbol, QgsLayoutItemPage, QgsMapSettings, QgsRectangle, QgsLayoutItemPicture, \
-    QgsLayoutExporter, QgsLayoutItemMapGrid, QgsLayoutItemScaleBar
+    QgsLayoutExporter, QgsLayoutItemMapGrid, QgsLayoutItemScaleBar, QgsScaleBarSettings, QgsTextFormat
 
-from FileFunctions.create_field import CreateField
+from .FileFunctions.create_field import CreateField
 from .FileFunctions.adjust_average import AdjustAverage
 from .FileFunctions.adjust_rate import Rate
 from .FileFunctions.edit_columns import EditColumns
@@ -209,7 +209,10 @@ class PrintPDF(QThread):
 
                 title = QgsLayoutItemLabel(layout)
                 title.setText(name)
-                title.setFont(QFont("Arial", 12, QFont.Bold))
+                _fmt = QgsTextFormat()
+                _fmt.setFont(QFont("Arial", 12, QFont.Bold))
+                _fmt.setSize(12)
+                title.setTextFormat(_fmt)
                 title.setMinimumSize(QgsLayoutSize(100, 10))
                 title.adjustSizeToText()
                 title.attemptMove(
@@ -248,7 +251,9 @@ class PrintPDF(QThread):
         map.grid().setGridLineWidth(0.2)
         map.grid().setAnnotationPrecision(6)
         map.grid().setAnnotationFrameDistance(2)
-        map.grid().setAnnotationFontColor(QColor(0, 0, 0))
+        _grid_fmt = map.grid().annotationTextFormat()
+        _grid_fmt.setColor(QColor(0, 0, 0))
+        map.grid().setAnnotationTextFormat(_grid_fmt)
 
         map.grid().setAnnotationDisplay(QgsLayoutItemMapGrid.HideAll, QgsLayoutItemMapGrid.Right)
         map.grid().setAnnotationDisplay(QgsLayoutItemMapGrid.HideAll, QgsLayoutItemMapGrid.Top)
@@ -284,14 +289,20 @@ class PrintPDF(QThread):
 
         title = QgsLayoutItemLabel(layout)
         title.setText(name)
-        title.setFont(QFont("Arial", 28, QFont.Bold))
+        _fmt = QgsTextFormat()
+        _fmt.setFont(QFont("Arial", 28, QFont.Bold))
+        _fmt.setSize(28)
+        title.setTextFormat(_fmt)
         title.adjustSizeToText()
         title.attemptMove(QgsLayoutPoint(5, 5, QgsUnitTypes.LayoutMillimeters))
         layout.addLayoutItem(title)
 
         title1 = QgsLayoutItemLabel(layout)
         title1.setText(fild + '\n' + tal)
-        title1.setFont(QFont("Arial", 15))
+        _fmt = QgsTextFormat()
+        _fmt.setFont(QFont("Arial", 15))
+        _fmt.setSize(15)
+        title1.setTextFormat(_fmt)
         title1.setHAlign(Qt.AlignRight)
         title1.setVAlign(Qt.AlignTop)
         title1.adjustSizeToText()
@@ -326,14 +337,18 @@ class PrintPDF(QThread):
         scale_bar.setLinkedMap(map)
         scale_bar.setStyle('Line Ticks Up')
         scale_bar.setUnits(QgsUnitTypes.DistanceUnit.DistanceMeters)
-        scale_bar.setSegmentSizeMode(1)
+        scale_bar.setSegmentSizeMode(QgsScaleBarSettings.SegmentSizeFitWidth)
         scale_bar.setNumberOfSegmentsLeft(0)
         scale_bar.setNumberOfSegments(2)
         scale_bar.setMinimumBarWidth(10)
         scale_bar.setMaximumBarWidth(50)
         scale_bar.setUnitLabel("m")
-        sbf = scale_bar.font()
-        sbf.setPointSize(9)
+        _sb_fmt = scale_bar.textFormat()
+        _sb_font = _sb_fmt.font()
+        _sb_font.setPointSize(9)
+        _sb_fmt.setFont(_sb_font)
+        _sb_fmt.setSize(9)
+        scale_bar.setTextFormat(_sb_fmt)
         scale_bar.setHeight(2)
 
         # scale_bar.setPos(100, 100)
@@ -401,7 +416,10 @@ class PrintPDF(QThread):
 
         title_uni = QgsLayoutItemLabel(layout)
         title_uni.setText(self.tr('Unidade: kg/ha'))
-        title_uni.setFont(QFont("Arial", 8))
+        _fmt = QgsTextFormat()
+        _fmt.setFont(QFont("Arial", 8))
+        _fmt.setSize(8)
+        title_uni.setTextFormat(_fmt)
         title_uni.adjustSizeToText()
         title_uni.attemptMove(QgsLayoutPoint(10, page_height - 10, QgsUnitTypes.LayoutMillimeters))
         layout.addLayoutItem(title_uni)
@@ -470,7 +488,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
     Classe responsável por todas as funções da classe FileWidget, ou seja cada layer que for
     carregada no plugin.
     """
-    reset_layer_signal = pyqtSignal(object, list)
+    reset_layer_signal = pyqtSignal(str, list)
     merged_layer_signal = pyqtSignal(str, list)
     back_button_hide_signal = pyqtSignal()
     back_button_show_signal = pyqtSignal()
@@ -739,7 +757,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
             self.back_button_show_signal.emit(),
             self.deleteLater()
         ))
-        self.reset.finished_fail.connect(lambda: (
+        self.reset.finished_fail.connect(lambda msg: (
+            self.iface.messageBar().pushMessage(msg, level=Qgis.Critical, duration=5),
             self.back_animation_signal.emit(),
             self.reset_loading.stop(),
             self.reset_loading.deleteLater(),

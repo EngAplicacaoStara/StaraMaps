@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QObject
-from PyQt5.QtWidgets import QFrame, QLabel, QVBoxLayout, QGraphicsOpacityEffect
+from qgis.PyQt.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QObject
+from qgis.PyQt.QtWidgets import QFrame, QLabel, QVBoxLayout, QGraphicsOpacityEffect
 
 
 class Messages(QObject):

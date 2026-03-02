@@ -1,10 +1,10 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSignal, QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSignal, QRegExp
+from qgis.PyQt.QtGui import QRegExpValidator
+from qgis.PyQt.QtWidgets import QWidget
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -22,7 +22,7 @@ class RangeWidget(QWidget, FORM_CLASS):
         self.index = index
         self.lower_value = 0
         self.upper_value = 0
-        regex_only_num = QRegExp("[-+]?[0-9]*\.?[0-9]+")
+        regex_only_num = QRegExp(r"[-+]?[0-9]*\.?[0-9]+")
         line_edit_val = QRegExpValidator(regex_only_num, self.newLineEdit)
         self.newLineEdit.setValidator(line_edit_val)
         self.range_index = range_index

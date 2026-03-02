@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtGui import QMovie
-from PyQt5.QtWidgets import QLabel
+from qgis.PyQt.QtGui import QMovie
+from qgis.PyQt.QtWidgets import QLabel
 
 
 class Loading(QLabel):

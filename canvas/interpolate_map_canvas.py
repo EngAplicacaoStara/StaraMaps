@@ -1,4 +1,4 @@
-from canvas.map_canvas import MapCanvas
+from .map_canvas import MapCanvas
 from qgis.PyQt.QtCore import pyqtSlot, QSize
 
 

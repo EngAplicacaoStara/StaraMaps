@@ -1,10 +1,10 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QVariant, QRegularExpression
-from PyQt5.QtGui import QRegularExpressionValidator
-from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant, QMetaType, QRegularExpression
+from qgis.PyQt.QtGui import QRegularExpressionValidator
+from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis._core import QgsField
 
 from .loading import Loading
@@ -355,9 +355,9 @@ class ColumnValues(ValuesWindow):
             return
 
         if text_2.isnumeric():
-            area_field = QgsField(text_1, QVariant.Int)
+            area_field = QgsField(text_1, QMetaType.Type.Int)
         else:
-            area_field = QgsField(text_1, QVariant.String)
+            area_field = QgsField(text_1, QMetaType.Type.QString)
 
         self.layer.startEditing()
         self.layer.dataProvider().addAttributes([area_field])

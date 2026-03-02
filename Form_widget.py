@@ -1,11 +1,10 @@
 import os
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import QPoint, QRegExp, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer
-from PyQt5.QtGui import QColor, QRegExpValidator, QFocusEvent
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QLabel, QLineEdit, QApplication, QComboBox, QListWidget
-from qgis.PyQt import QtWidgets, QtCore
+from qgis.PyQt import uic, QtWidgets, QtCore, QtGui
+from qgis.PyQt.QtCore import QPoint, QRegExp, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer
+from qgis.PyQt.QtGui import QColor, QRegExpValidator, QFocusEvent
+from qgis.PyQt.QtWidgets import QGraphicsDropShadowEffect, QLabel, QLineEdit, QApplication, QComboBox, QListWidget
 
 from .qgisFuncs import TextInfoTest
 
@@ -81,6 +80,19 @@ class FloatComboBox(QComboBox):
         self._set_line_edit_in_use = obj
 
 
+class _FocusInFilter(QtCore.QObject):
+    """Event filter that triggers a callback on FocusIn without replacing focusInEvent."""
+
+    def __init__(self, callback, parent=None):
+        super().__init__(parent)
+        self._callback = callback
+
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.FocusIn:
+            self._callback("")
+        return False  # pass event through so original focusInEvent runs
+
+
 class FormWidget(QtWidgets.QWidget, FORM_CLASS):
     addSignal = QtCore.pyqtSignal(object, object, list)
     cancelSignal = QtCore.pyqtSignal()
@@ -149,40 +161,21 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
         point_validator = QRegExpValidator(regex, self.pointLineEdit)
 
         self.proLineEdit.setValidator(pro_validator)
-        self.proLineEdit.focusInEvent = self.line_edit_text_changes
-        self.proLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.farmLineEdit.setValidator(farm_validator)
-        self.farmLineEdit.focusInEvent = self.line_edit_text_changes
-        self.farmLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.talLineEdit.setValidator(tal_validator)
-        self.talLineEdit.focusInEvent = self.line_edit_text_changes
-        self.talLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.anoLineEdit.setValidator(ano_validator)
-        self.anoLineEdit.focusInEvent = self.line_edit_text_changes
-        self.anoLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.culLineEdit.setValidator(cul_validator)
-        self.culLineEdit.focusInEvent = self.line_edit_text_changes
-        self.culLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.appTyLineEdit.setValidator(app_vilidator)
-        self.appTyLineEdit.focusInEvent = self.line_edit_text_changes
-        self.appTyLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.bordLineEdit.setValidator(bord_validator)
-        self.bordLineEdit.focusInEvent = self.line_edit_text_changes
-        self.bordLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.lineLineEdit.setValidator(line_validator)
-        self.lineLineEdit.focusInEvent = self.line_edit_text_changes
-        self.lineLineEdit.textChanged[str].connect(self.line_edit_text_changes)
-
         self.pointLineEdit.setValidator(point_validator)
-        self.pointLineEdit.focusInEvent = self.line_edit_text_changes
-        self.pointLineEdit.textChanged[str].connect(self.line_edit_text_changes)
+
+        self._focus_filter = _FocusInFilter(self.line_edit_text_changes, self)
+        for le in [self.proLineEdit, self.farmLineEdit, self.talLineEdit,
+                   self.anoLineEdit, self.culLineEdit, self.appTyLineEdit,
+                   self.bordLineEdit, self.lineLineEdit, self.pointLineEdit]:
+            le.installEventFilter(self._focus_filter)
+            le.textChanged[str].connect(self.line_edit_text_changes)
 
         self.effect = QGraphicsDropShadowEffect()
         self.effect.setBlurRadius(5.0)

@@ -1,9 +1,10 @@
 import os
+import shutil
 import subprocess
 
-from PyQt5.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QPushButton, QWidget, QHBoxLayout, QLabel, QApplication, QCheckBox, QComboBox
+from qgis.PyQt.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QPushButton, QWidget, QHBoxLayout, QLabel, QApplication, QCheckBox, QComboBox
 from qgis._core import QgsLayerTree, QgsVectorLayer, QgsStyle, QgsGraduatedSymbolRenderer, QgsVectorFileWriter, \
     QgsProcessingFeedback, QgsWkbTypes, QgsSpatialIndex, \
     QgsGeometry, QgsProject
@@ -329,45 +330,27 @@ class LOGTOSHP(QThread):
 
 class Backup(QThread):
     on_finished = pyqtSignal()
-    on_new_layer = pyqtSignal(str)
 
     def __init__(self, layer):
         super(Backup, self).__init__()
-        self.layer = layer
+        # Extract only primitive/safe values in the main thread.
+        # All heavy I/O (getFeatures, dataProvider) runs inside run() on a
+        # fresh QgsVectorLayer created in the thread — never share layer
+        # objects across threads.
+        self.layer_name = layer.name().split('.')[0]
+        self.source_path = layer.dataProvider().dataSourceUri().split('|')[0]
 
     def run(self) -> None:
-        layer_copy = get_layer_copy(self.layer)
+        backup_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'backup')
+        dest_shp = os.path.join(backup_dir, f'{self.layer_name}.shp')
 
-        layer_name = layer_copy.name().split('.')[0]
-
-        directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'backup', f'{layer_name}.shp')
-
-        if not os.path.isfile(directory):
-            geo_type = layer_copy.geometryType()
-            if geo_type == QgsWkbTypes.Point or geo_type == QgsWkbTypes.PointGeometry:
-                to_save_layer = QgsVectorLayer("Point?crs=epsg:4326", layer_name, "memory")
-            else:
-                to_save_layer = QgsVectorLayer("Polygon?crs=epsg:4326", layer_name, "memory")
-
-            feats = [feat for feat in layer_copy.getFeatures()]
-            to_save_layer_data = to_save_layer.dataProvider()
-            attr = layer_copy.dataProvider().fields().toList()
-            to_save_layer_data.addAttributes(attr)
-            to_save_layer.updateFields()
-            to_save_layer_data.addFeatures(feats)
-
-            QgsVectorFileWriter.writeAsVectorFormat(to_save_layer,
-                                                    directory,
-                                                    "utf-8", driverName="ESRI Shapefile",
-                                                    layerOptions=['GEOMETRY=AS_XYZ'])
-
-            self.on_new_layer.emit(to_save_layer.id())
-
-
-
-
-        else:
-            print_log(self, self.run)
+        if not os.path.isfile(dest_shp):
+            os.makedirs(backup_dir, exist_ok=True)
+            base_src = os.path.splitext(self.source_path)[0]
+            for ext in ('.shp', '.dbf', '.shx', '.prj', '.cpg', '.qpj', '.sbn', '.sbx'):
+                src_file = base_src + ext
+                if os.path.isfile(src_file):
+                    shutil.copy2(src_file, os.path.join(backup_dir, self.layer_name + ext))
 
         self.on_finished.emit()
 
@@ -1434,8 +1417,9 @@ class CustomDockTitleBar(QWidget):
 
 
 class ResetLayer(QThread):
-    finished_signal = pyqtSignal(object, object)
-    finished_fail = pyqtSignal()
+    # Emits file path (str) only — never pass QgsVectorLayer across threads
+    finished_signal = pyqtSignal(str, object)
+    finished_fail = pyqtSignal(str)
 
     def __init__(self, layer, project):
         super().__init__()
@@ -1445,14 +1429,11 @@ class ResetLayer(QThread):
         self.tree.reverse()
 
         self.layer_name = layer.name().split('.')[0]
-        self.current_layer_path = layer.dataProvider().dataSourceUri()
-
-        print(self.layer_name)
-        print(self.current_layer_path)
+        # Strip |layerid=... suffix that OGR provider may append
+        self.current_layer_path = layer.dataProvider().dataSourceUri().split('|')[0]
 
         self.layer_backup_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                               'backup', f'{self.layer_name}.shp')
-        print(self.layer_backup_path)
 
     def run(self) -> None:
         if os.path.isfile(self.layer_backup_path):
@@ -1460,28 +1441,22 @@ class ResetLayer(QThread):
             new_layer = QgsVectorLayer(os.path.abspath(self.current_layer_path), self.layer_name, "ogr")
 
             with edit(new_layer):
-                flds = [f for f in new_layer.fields()]
-                names = [f.name() for f in flds]
-                fields_to_temove = []
-                for name in names:
-                    fieldindex_to_delete = new_layer.fields().indexFromName(name)
-                    fields_to_temove.append(fieldindex_to_delete)
-
-                new_layer.dataProvider().deleteAttributes(fields_to_temove)
+                names = [f.name() for f in new_layer.fields()]
+                fields_to_remove = [new_layer.fields().indexFromName(n) for n in names]
+                new_layer.dataProvider().deleteAttributes(fields_to_remove)
 
                 for feat in new_layer.getFeatures():
                     new_layer.deleteFeature(feat.id())
             new_layer.updateFields()
 
             backup_layer_feats = [feat for feat in backup_layer.getFeatures()]
-
             attr = backup_layer.dataProvider().fields().toList()
-
             new_layer.dataProvider().addAttributes(attr)
             new_layer.updateFields()
             new_layer.dataProvider().addFeatures(backup_layer_feats)
 
-            self.finished_signal.emit(new_layer, self.tree)
+            # Emit only the path — recreate QgsVectorLayer in the main thread
+            self.finished_signal.emit(self.current_layer_path, self.tree)
         else:
-            iface.messageBar().pushMessage('Arquivo não existe!', level=Qgis.Critical, duration=5)
-            self.finished_fail.emit()
+            # Never call iface from a background thread — emit message via signal
+            self.finished_fail.emit('Arquivo de backup não existe!')

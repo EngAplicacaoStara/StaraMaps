@@ -1,6 +1,6 @@
 import os
 
-from canvas.map_canvas_refactor import MapCanvasRefactor
+from .map_canvas_refactor import MapCanvasRefactor
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis._core import QgsVectorLayer, QgsFeature, QgsVectorFileWriter, QgsProject
 

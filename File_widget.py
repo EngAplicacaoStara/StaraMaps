@@ -2,13 +2,13 @@ import math
 import os
 import pathlib
 
-from PyQt5.QtCore import QFileInfo, QPropertyAnimation, QSequentialAnimationGroup, QEasingCurve, QPoint, \
+from qgis.PyQt.QtCore import QFileInfo, QPropertyAnimation, QSequentialAnimationGroup, QEasingCurve, QPoint, \
     pyqtSignal, pyqtSlot
 from qgis.PyQt import QtWidgets, QtCore
 from qgis.PyQt import uic
 from qgis._core import QgsVectorFileWriter, QgsCoordinateReferenceSystem
 from qgis.core import QgsStyle, QgsVectorLayer, QgsLayerTreeLayer, QgsClassificationEqualInterval, \
-    QgsRendererRangeLabelFormat, QgsGraduatedSymbolRenderer, QgsFillSymbol, QgsSingleSymbolRenderer, QgsLineSymbol
+    QgsGraduatedSymbolRenderer, QgsFillSymbol, QgsSingleSymbolRenderer, QgsLineSymbol
 from qgis.utils import *
 
 from .loading import Loading
@@ -110,7 +110,7 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
         else:
             self.layer = QgsVectorLayer(os.path.abspath(self.path), self.filename, "ogr")
 
-        self.layer.setCrs(QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId))
+        self.layer.setCrs(QgsCoordinateReferenceSystem.fromEpsgId(4326))
         self.layer_id = self.layer.id()
 
         self.update_fields_list()
@@ -176,12 +176,10 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
         self.value_field = names[0] if names else None
 
     def do_backup(self):
-
         self.loading_file_wid_bac = Loading(self.labelExt)
         self.loading_file_wid_bac.start()
         self.loading_file_wid_bac.show()
         self.backup = Backup(self.layer)
-        self.backup.on_new_layer.connect(self.remove_layer)
         self.backup.on_finished.connect(self.loading_file_wid_bac.stop)
         self.backup.on_finished.connect(self.loading_file_wid_bac.hide)
         self.backup.on_finished.connect(self.loading_file_wid_bac.deleteLater)
@@ -298,10 +296,9 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
             num_classes = 5
             classification_method = QgsClassificationEqualInterval()
 
-            format = QgsRendererRangeLabelFormat()
-            format.setFormat("%1 - %2")
-            format.setPrecision(2)
-            format.setTrimTrailingZeroes(True)
+            classification_method.setLabelFormat("%1 - %2")
+            classification_method.setLabelPrecision(2)
+            classification_method.setLabelTrimTrailingZeroes(True)
             default_style = QgsStyle().defaultStyle()
 
             # default_style.setColorGroup()
@@ -310,7 +307,6 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
             renderer = QgsGraduatedSymbolRenderer()
             renderer.setClassAttribute(self.value_field)
             renderer.setClassificationMethod(classification_method)
-            renderer.setLabelFormat(format)
 
             renderer.updateClasses(self.layer, num_classes)
             renderer.updateColorRamp(color_ramp)

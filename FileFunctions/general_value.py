@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSlot
+from qgis.PyQt.QtCore import QObject, pyqtSlot
 
 from ..qgisFuncs import add_buttons_to_grid, upgrade_grid
 from ..values_window import GeneralValues

@@ -2,11 +2,11 @@ import os
 import re
 import time
 
-from PyQt5.QtCore import QObject, QSize, pyqtSlot
-from PyQt5.QtWidgets import QListWidgetItem
+from qgis.PyQt.QtCore import QObject, QSize, pyqtSlot
+from qgis.PyQt.QtWidgets import QListWidgetItem
 from qgis._core import QgsVectorFileWriter
 
-from loading import Loading
+from ..loading import Loading
 from ..qgisFuncs import add_buttons_to_grid, upgrade_grid, ChangeBetweenValues, get_layer_copy, \
     list_groups_linked_to_layer, same_file
 from ..range_widget import RangeWidget

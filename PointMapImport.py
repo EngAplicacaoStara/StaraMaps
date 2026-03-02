@@ -4,14 +4,14 @@ import typing
 
 import geopandas as gpd
 import pandas as pd
-from PyQt5 import uic
-from PyQt5.QtCore import QSize, pyqtSlot, pyqtSignal, QThread
-from PyQt5.QtGui import QFocusEvent
-from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect, QListWidget
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QSize, pyqtSlot, pyqtSignal, QThread
+from qgis.PyQt.QtGui import QFocusEvent
+from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect, QListWidget
 from shapely.geometry import Point
 
-from loading import Loading
-from message import Message, Messages
+from .loading import Loading
+from .message import Message, Messages
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -69,13 +69,13 @@ class PointToShpConvert(QThread):
         try:
             df = pd.read_csv(self.file, sep=r'[;, \t]+', engine='python')
             geometry = [Point(xy) for xy in zip(lat, long)]
-            crs = {'init': 'epsg:4326'}
+            crs = 'EPSG:4326'
             gdf = gpd.GeoDataFrame(df, crs=crs, geometry=geometry)
             gdf.to_file(filename=self.out_file, driver='ESRI Shapefile')
+            self.finished_signal.emit()
         except Exception as e:
             print(e)
-            self.error_signal.emit(e)
-        self.finished_signal.emit()
+            self.error_signal.emit()
 
 
 class FloatList(QListWidget):
@@ -132,7 +132,7 @@ class PointMap(QWidget, FORM_CLASS):
 
     def init(self) -> None:
         self.setMaximumWidth(350)
-        self.setMaximumWidth(350)
+        self.setMaximumHeight(350)
         shadow = QGraphicsDropShadowEffect()
         shadow.setXOffset(0)
         shadow.setYOffset(0)
@@ -209,6 +209,10 @@ class PointMap(QWidget, FORM_CLASS):
         self.c_t = PointToShpConvert(c_1, c_2, self.file, self.out_file, self)
         self.c_t.finished_signal.connect(lambda: (
             self.finish_signal.emit(),
+            self.loading.stop(),
+            self.loading.deleteLater()
+        ))
+        self.c_t.error_signal.connect(lambda: (
             self.loading.stop(),
             self.loading.deleteLater()
         ))

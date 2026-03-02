@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot, QObject
+from qgis.PyQt.QtCore import pyqtSlot, QObject
 from qgis._core import QgsAggregateCalculator
 
 from ..qgisFuncs import upgrade_grid, add_buttons_to_grid

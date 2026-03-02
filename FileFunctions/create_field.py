@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import QObject
+from qgis.PyQt.QtCore import QObject
 
-from canvas.create_field_map_canvas import CreateFieldMapCanvas
+from ..canvas.create_field_map_canvas import CreateFieldMapCanvas
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis._core import QgsVectorFileWriter, QgsVectorLayer
 
@@ -26,12 +26,14 @@ class CreateField(QObject):
 
     @pyqtSlot(QgsVectorLayer, str)
     def save_new_layer(self, layer, name) -> None:
-        error = QgsVectorFileWriter.writeAsVectorFormat(
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = "ESRI Shapefile"
+        options.fileEncoding = "UTF-8"
+        error = QgsVectorFileWriter.writeAsVectorFormatV3(
             layer,
             os.path.dirname(self.main.layer.source()) + f"/{name}.shp",
-            "UTF-8",
-            layer.crs(),
-            "ESRI Shapefile"
+            layer.transformContext(),
+            options
         )
         self.main.main.check_file_extension(os.path.dirname(self.main.layer.source()) + f"/{name}.shp")
         self.deleteLater()

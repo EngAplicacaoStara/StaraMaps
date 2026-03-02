@@ -2,9 +2,9 @@ import os
 import sys
 
 import requests
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
-from PyQt5.QtGui import QCursor
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QDockWidget
+from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtWidgets import QWidget, QHBoxLayout, QDockWidget
 from qgis.PyQt import uic
 from qgis._core import QgsRasterLayer, QgsVectorLayer, QgsFeature
 from qgis._gui import QgsMapCanvas

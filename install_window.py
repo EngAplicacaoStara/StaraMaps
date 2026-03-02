@@ -3,9 +3,9 @@ import os
 import subprocess
 import sys
 
-from PyQt5 import uic
-from PyQt5.QtCore import QThread, Qt, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QThread, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis.core import Qgis
 from qgis.utils import iface
 import importlib.util

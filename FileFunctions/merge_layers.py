@@ -2,10 +2,10 @@ import os
 from pathlib import Path
 
 import processing
-from PyQt5.QtCore import QObject, pyqtSlot, QSize, Qt, QThread, pyqtSignal
-from PyQt5.QtWidgets import QFileDialog, QListWidgetItem
+from qgis.PyQt.QtCore import QObject, pyqtSlot, QSize, Qt, QThread, pyqtSignal
+from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 
-from loading import Loading
+from ..loading import Loading
 from ..File_widget import FileWidget
 from ..qgisFuncs import get_layer_copy, list_groups_linked_to_layer, CustomColumn, print_log, MyFeedBack
 
