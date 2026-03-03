@@ -1,6 +1,6 @@
 import os
 
-from qgis.PyQt.QtCore import QObject, pyqtSlot
+from qgis.PyQt.QtCore import QObject, pyqtSlot, QCoreApplication
 from qgis._core import QgsVectorFileWriter, QgsVectorLayer, Qgis
 from qgis.utils import iface
 
@@ -8,6 +8,10 @@ from ..canvas.create_field_map_canvas import CreateFieldMapCanvas
 
 
 class CreateField(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('CreateField', message)
+
     def __init__(self, main=None):
         super().__init__()
         self.main = main

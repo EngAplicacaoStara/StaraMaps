@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from qgis.PyQt.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent, QTimer
+from qgis.PyQt.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent, QTimer, QCoreApplication
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QPushButton, QWidget, QHBoxLayout, QLabel, QApplication, QCheckBox, QComboBox
 from qgis._core import QgsLayerTree, QgsVectorLayer, QgsStyle, QgsGraduatedSymbolRenderer, QgsVectorFileWriter, \
@@ -788,6 +788,9 @@ class InfoLineEdit(Info):
 
 
 class TextInfoTest(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('TextInfoTest', message)
 
     def __init__(self):
         super().__init__()

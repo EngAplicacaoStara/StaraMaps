@@ -7,7 +7,7 @@ from pathlib import Path
 
 import utm
 from PIL import Image
-from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize, QTimer
+from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize, QTimer, QCoreApplication
 from qgis.PyQt.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon
 from qgis.PyQt.QtWidgets import QFileDialog, QPushButton
 from qgis.PyQt import QtWidgets
@@ -116,6 +116,9 @@ class SaveThreadUTM(QThread):
 
 class PrintPDF(QThread):
     on_finished = pyqtSignal(object)
+
+    def tr(self, message):
+        return QCoreApplication.translate('PrintPDF', message)
 
     def __init__(self, layer, project, image_path, option_image_path=None, unit='kg/ha', parent=None):
         super(PrintPDF, self).__init__()
@@ -455,6 +458,10 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
     Classe responsável por todas as funções da classe FileWidget, ou seja cada layer que for
     carregada no plugin.
     """
+
+    def tr(self, message):
+        return QCoreApplication.translate('FileOptions', message)
+
     reset_layer_signal = pyqtSignal(str, list)
     merged_layer_signal = pyqtSignal(str, list)
     back_button_hide_signal = pyqtSignal()

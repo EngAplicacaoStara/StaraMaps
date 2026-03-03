@@ -2,7 +2,7 @@ import os
 import sys
 
 from qgis.PyQt import uic, QtWidgets, QtCore, QtGui
-from qgis.PyQt.QtCore import QPoint, QRegExp, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer
+from qgis.PyQt.QtCore import QPoint, QRegExp, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer, QCoreApplication
 from qgis.PyQt.QtGui import QColor, QRegExpValidator, QFocusEvent
 from qgis.PyQt.QtWidgets import QGraphicsDropShadowEffect, QLabel, QLineEdit, QApplication, QComboBox, QListWidget
 
@@ -96,6 +96,9 @@ class _FocusInFilter(QtCore.QObject):
 class FormWidget(QtWidgets.QWidget, FORM_CLASS):
     addSignal = QtCore.pyqtSignal(object, object, list)
     cancelSignal = QtCore.pyqtSignal()
+
+    def tr(self, message):
+        return QCoreApplication.translate('FormWidget', message)
 
     def __init__(self, item, file, project, parent=None):
         super(FormWidget, self).__init__(parent)

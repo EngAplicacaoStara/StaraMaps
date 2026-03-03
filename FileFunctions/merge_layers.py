@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 import processing
-from qgis.PyQt.QtCore import QObject, pyqtSlot, QSize, Qt, QThread, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSlot, QSize, Qt, QThread, pyqtSignal, QCoreApplication
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 
 from qgis.core import Qgis
@@ -40,6 +40,10 @@ class MergeThread(QThread):
 
 
 class Merge(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('Merge', message)
+
     def __init__(self, main=None):
         super().__init__()
         self.main = main

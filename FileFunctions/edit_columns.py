@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import pyqtSlot, QObject, QThread, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, QObject, QThread, pyqtSignal, QCoreApplication
 from qgis.core import edit, Qgis
 from qgis.utils import iface
 
@@ -22,6 +22,10 @@ class DeleteColumnsThread(QThread):
 
 
 class EditColumns(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('EditColumns', message)
+
     def __init__(self, main=None):
         super().__init__()
         self.main = main

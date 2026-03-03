@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QThread, Qt, pyqtSignal
+from qgis.PyQt.QtCore import QThread, Qt, pyqtSignal, QCoreApplication
 from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis.core import Qgis
 from qgis.utils import iface
@@ -75,6 +75,9 @@ class InstallThread(QThread):
 class InfoWindow(QWidget, FORM_CLASS):
     finished_signal = pyqtSignal()
 
+    def tr(self, message):
+        return QCoreApplication.translate('InfoWindow', message)
+
     def __init__(self, parent=None):
         super(InfoWindow, self).__init__(parent)
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -88,17 +91,16 @@ class InfoWindow(QWidget, FORM_CLASS):
         shadow.setYOffset(0)
         shadow.setBlurRadius(15)
         self.setGraphicsEffect(shadow)
+        self.label.setText(self.tr("Iniciando..."))
         self.loading = Loading(self.frame_4)
         self.loading.start()
         self.loading.show()
 
         self.install_thread = InstallThread()
-        self.install_thread.info_signal.connect(lambda text:
-                                                self.label.setText(text)
-                                                )
-        self.install_thread.error_signal.connect(lambda msg: iface.messageBar().pushWarning("Erro", msg))
+        self.install_thread.info_signal.connect(self.label.setText)
+        self.install_thread.error_signal.connect(lambda msg: iface.messageBar().pushWarning(self.tr("Erro"), msg))
         self.install_thread.finished_signal.connect(lambda: (
-            iface.messageBar().pushSuccess("Concluído", "Instalação finalizada!"),
+            iface.messageBar().pushSuccess(self.tr("Concluído"), self.tr("Instalação finalizada!")),
             self.finished_signal.emit()
         ))
         self.install_thread.start()

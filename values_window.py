@@ -2,7 +2,7 @@ import os
 import sys
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant, QMetaType, QRegularExpression
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant, QMetaType, QRegularExpression, QCoreApplication
 from qgis.PyQt.QtGui import QRegularExpressionValidator
 from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis._core import QgsField
@@ -21,6 +21,9 @@ class ValuesWindow(QWidget, FORM_CLASS):
     close_signal = pyqtSignal()
     finish_signal = pyqtSignal()
     update_features_signal = pyqtSignal(object, object, object)
+
+    def tr(self, message):
+        return QCoreApplication.translate(type(self).__name__, message)
 
     def __init__(self, back_button=None, parent=None):
         super(ValuesWindow, self).__init__(parent)

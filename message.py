@@ -1,8 +1,11 @@
-from qgis.PyQt.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QObject
+from qgis.PyQt.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QObject, QCoreApplication
 from qgis.PyQt.QtWidgets import QFrame, QLabel, QVBoxLayout, QGraphicsOpacityEffect
 
 
 class Messages(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('Messages', message)
 
     def empty_field(self):
         return self.tr("Preencha todos os campos.")

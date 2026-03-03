@@ -1,7 +1,7 @@
 import os
 
 import processing
-from qgis.PyQt.QtCore import QObject, pyqtSlot
+from qgis.PyQt.QtCore import QObject, pyqtSlot, QCoreApplication
 from qgis.PyQt.QtWidgets import QPushButton, QFileDialog
 from qgis._analysis import QgsInterpolator, QgsIDWInterpolator, QgsGridFileWriter
 from qgis._core import QgsVectorLayer, QgsApplication, QgsTask, QgsWkbTypes, QgsProcessingFeatureSourceDefinition, \
@@ -21,6 +21,10 @@ NUMERIC_TYPES = (QVariant.Int, QVariant.LongLong, QVariant.Double,
 
 
 class Interpolate(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('Interpolate', message)
+
     def __init__(self, main=None):
         super().__init__()
         self.main = main

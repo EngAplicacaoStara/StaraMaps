@@ -28,7 +28,7 @@ import sys
 import requests
 from qgis.PyQt.QtCore import QAbstractAnimation, QPropertyAnimation, QSequentialAnimationGroup, QSize, \
     QEasingCurve, Qt, \
-    QPoint, pyqtSlot, pyqtSignal
+    QPoint, pyqtSlot, pyqtSignal, QCoreApplication
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QFileDialog, QApplication, QGraphicsDropShadowEffect, QGraphicsOpacityEffect
 from qgis.PyQt import QtWidgets
@@ -50,6 +50,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
     terrain_layer = pyqtSignal(object, bool)
+
+    def tr(self, message):
+        return QCoreApplication.translate('StaraMapsDialog', message)
 
     def __init__(self, layers=[], iface=None, project=None, parent=None):
         super(StaraMapsDialog, self).__init__(parent)

@@ -1,494 +1,600 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
+<?xml version='1.0' encoding='utf-8'?>
 <TS version="2.1" language="es_ES">
 <context>
     <name>BetweenValues</name>
     <message>
-        <location filename="../values_window.py" line="173"/>
+        <location filename="../values_window.py" line="179" />
         <source>Avançar</source>
-        <translation type="obsolete">Próximo</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="176"/>
+        <location filename="../values_window.py" line="182" />
         <source>Excluir Valores ENTRE:</source>
-        <translation type="obsolete">Eliminar valores ENTRE:</translation>
+        <translation>Excluir Valores ENTRE:</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="176"/>
+        <location filename="../values_window.py" line="182" />
         <source> e </source>
-        <translation type="obsolete"> y </translation>
+        <translation>y</translation>
     </message>
 </context>
 <context>
     <name>BiggerValues</name>
     <message>
-        <location filename="../values_window.py" line="73"/>
+        <location filename="../values_window.py" line="93" />
         <source>Avançar</source>
-        <translation type="obsolete">Próximo</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="76"/>
+        <location filename="../values_window.py" line="96" />
         <source>Excluir Valores MAIORES que:</source>
-        <translation type="obsolete">Excluir valores MAYORES que:</translation>
+        <translation>Excluir Valores MAYORES que:</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="76"/>
+        <location filename="../values_window.py" line="96" />
         <source> e </source>
-        <translation type="obsolete"> y </translation>
+        <translation>y</translation>
     </message>
 </context>
 <context>
     <name>ChangeMValues</name>
     <message>
-        <location filename="../values_window.py" line="225"/>
+        <location filename="../values_window.py" line="224" />
         <source>Avançar</source>
-        <translation type="obsolete">Próximo</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="228"/>
+        <location filename="../values_window.py" line="227" />
         <source>Adicionar valor:</source>
-        <translation type="obsolete">Agregar valor:</translation>
+        <translation>Agregar valor:</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="228"/>
+        <location filename="../values_window.py" line="227" />
         <source> e </source>
-        <translation type="obsolete"> y </translation>
+        <translation>y</translation>
     </message>
 </context>
 <context>
     <name>ColumnValues</name>
     <message>
-        <location filename="../values_window.py" line="319"/>
+        <location filename="../values_window.py" line="305" />
         <source>Avançar</source>
-        <translation type="obsolete">Próximo</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="320"/>
+        <location filename="../values_window.py" line="306" />
         <source>Nome da Coluna</source>
-        <translation type="obsolete">Nombre de columna</translation>
+        <translation>Nombre de Columna</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="321"/>
+        <location filename="../values_window.py" line="307" />
         <source>Valor</source>
-        <translation type="obsolete">Valor</translation>
+        <translation>Valor</translation>
+    </message>
+</context>
+<context>
+    <name>CreateField</name>
+    <message>
+        <location filename="../FileFunctions/create_field.py" line="40" />
+        <source>Erro ao salvar bordadura</source>
+        <translation>Error al guardar borde</translation>
+    </message>
+</context>
+<context>
+    <name>EditColumns</name>
+    <message>
+        <location filename="../FileFunctions/edit_columns.py" line="133" />
+        <source>Erro</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/edit_columns.py" line="133" />
+        <source>Não foi possível deletar os campos.</source>
+        <translation>No fue posible eliminar los campos.</translation>
     </message>
 </context>
 <context>
     <name>FileOptions</name>
     <message>
-        <location filename="../File_options.py" line="495"/>
+        <location filename="../File_options.py" line="477" />
         <source>EXPORTAR</source>
-        <translation type="obsolete">EXPORTAR</translation>
+        <translation>EXPORTAR</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="496"/>
+        <location filename="../File_options.py" line="478" />
         <source>IMPRIMIR</source>
-        <translation type="obsolete">IMPRIMIR</translation>
+        <translation>IMPRIMIR</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="497"/>
+        <location filename="../File_options.py" line="479" />
         <source>RESETAR</source>
-        <translation type="obsolete">REINICIAR</translation>
+        <translation>RESTABLECER</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="498"/>
+        <location filename="../File_options.py" line="480" />
         <source>UNIR</source>
-        <translation type="obsolete">UNIR</translation>
+        <translation>UNIR</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="499"/>
+        <location filename="../File_options.py" line="481" />
         <source>TAXAS</source>
-        <translation type="obsolete">TASA</translation>
+        <translation>TASAS</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="500"/>
+        <location filename="../File_options.py" line="482" />
         <source>COLUNAS</source>
-        <translation type="obsolete">COLUMNAS</translation>
+        <translation>COLUMNAS</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="501"/>
+        <location filename="../File_options.py" line="483" />
         <source>INTERPOLAR</source>
-        <translation type="obsolete">INTERPOLAR</translation>
+        <translation>INTERPOLAR</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="502"/>
+        <location filename="../File_options.py" line="484" />
         <source>AJUSTAR MÉDIA</source>
-        <translation type="obsolete">AJUSTAR MEDIA</translation>
+        <translation>AJUSTAR MEDIA</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="503"/>
+        <location filename="../File_options.py" line="485" />
         <source>Z. MANEJO</source>
-        <translation type="obsolete">Z. GESTIÓN</translation>
+        <translation>Z. MANEJO</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="504"/>
+        <location filename="../File_options.py" line="486" />
         <source>VALOR GERAL</source>
-        <translation type="obsolete">VALOR GENERAL</translation>
+        <translation>VALOR GENERAL</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="506"/>
+        <location filename="../File_options.py" line="488" />
         <source>União &gt; Escolha um mapa para unir</source>
-        <translation type="obsolete">Unión &gt; Elegir un mapa para unir</translation>
+        <translation>Unir &gt; Elija un mapa para unir</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="507"/>
+        <location filename="../File_options.py" line="489" />
         <source>Taxas &gt; Selecione uma coluna</source>
-        <translation type="obsolete">Tarifas &gt; Seleccione una columna</translation>
+        <translation>Tasas &gt; Seleccione una columna</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="508"/>
+        <location filename="../File_options.py" line="490" />
         <source>Exportar &gt; Exportar para o formato</source>
-        <translation type="obsolete">Exportar &gt; Exportar a formato</translation>
+        <translation>Exportar &gt; Exportar al formato</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="509"/>
+        <location filename="../File_options.py" line="491" />
         <source>Imprimir &gt; Imprimir PDF</source>
-        <translation type="obsolete">Imprimir &gt; Imprimir PDF</translation>
+        <translation>Imprimir &gt; Imprimir PDF</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="510"/>
+        <location filename="../File_options.py" line="492" />
         <source>Colunas &gt; Gerenciar Colunas</source>
-        <translation type="obsolete">Columnas &gt; Administrar columnas</translation>
+        <translation>Columnas &gt; Gestionar Columnas</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="511"/>
+        <location filename="../File_options.py" line="493" />
         <source>Interpolar &gt; Selecione uma Coluna</source>
-        <translation type="obsolete">Interpolar &gt; Seleccionar una columna</translation>
+        <translation>Interpolar &gt; Seleccione una Columna</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="512"/>
+        <location filename="../File_options.py" line="494" />
         <source>Ajustar Média &gt; Selecionar uma Coluna</source>
-        <translation type="obsolete">Ajustar la media &gt; Seleccionar una columna</translation>
+        <translation>Ajustar Media &gt; Seleccionar una Columna</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="513"/>
+        <location filename="../File_options.py" line="495" />
         <source>Zonas de manejo</source>
-        <translation type="obsolete">Zonas de gestión</translation>
+        <translation>Zonas de manejo</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="514"/>
+        <location filename="../File_options.py" line="496" />
         <source>Valor Geral</source>
-        <translation type="obsolete">Valor general</translation>
+        <translation>Valor General</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="516"/>
+        <location filename="../File_options.py" line="498" />
         <source>Coeficiênte</source>
-        <translation type="obsolete">Coeficiente</translation>
+        <translation>Coeficiente</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="517"/>
+        <location filename="../File_options.py" line="499" />
         <source>Tamanho do Pixel (Metros)</source>
-        <translation type="obsolete">Tamaño de píxel (Metros)</translation>
+        <translation>Tamaño del Pixel (Metros)</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="518"/>
+        <location filename="../File_options.py" line="500" />
         <source>Contorno Manual</source>
-        <translation type="obsolete">Contorneado manual</translation>
+        <translation>Contorno Manual</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="519"/>
+        <location filename="../File_options.py" line="501" />
         <source>Carregar</source>
-        <translation type="obsolete">Carga</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="520"/>
+        <location filename="../File_options.py" line="502" />
         <source>Interpolar</source>
-        <translation type="obsolete">Interpolar</translation>
+        <translation>Interpolar</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="779"/>
+        <location filename="../File_options.py" line="833" />
         <source>Selecione uma imagem</source>
-        <translation type="obsolete">Seleccione una imagen</translation>
+        <translation>Seleccione una imagen</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="523"/>
+        <location filename="../File_options.py" line="505" />
         <source>Imprimir</source>
-        <translation type="obsolete">Imprimir</translation>
+        <translation>Imprimir</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="746"/>
+        <location filename="../File_options.py" line="800" />
         <source>Salvar</source>
-        <translation type="obsolete">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="594"/>
+        <location filename="../File_options.py" line="627" />
         <source>Selecione uma coluna:</source>
-        <translation type="obsolete">Selecciona una columna:</translation>
+        <translation>Seleccione una columna:</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="634"/>
+        <location filename="../File_options.py" line="674" />
         <source>Exportar para:</source>
-        <translation type="obsolete">Exportar a:</translation>
+        <translation>Exportar a:</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="754"/>
+        <location filename="../File_options.py" line="808" />
         <source>Abrir arquivo de imagem</source>
-        <translation type="obsolete">Abrir archivo de imagen</translation>
+        <translation>Abrir archivo de imagen</translation>
     </message>
     <message>
-        <location filename="../File_options.py" line="754"/>
+        <location filename="../File_options.py" line="808" />
         <source>Arquivos de imagens (*.jpg *.png)</source>
-        <translation type="obsolete">Archivos de imagen (*.jpg *.png)</translation>
+        <translation>Archivos de imagen (*.jpg *.png)</translation>
+    </message>
+    <message>
+        <location filename="../File_options.py" line="660" />
+        <source>Erro VRC</source>
+        <translation>Error VRC</translation>
+    </message>
+    <message>
+        <location filename="../File_options.py" line="933" />
+        <source>Erro</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <location filename="../File_options.py" line="933" />
+        <source>Falha ao exportar PDF.</source>
+        <translation>Error al exportar PDF.</translation>
     </message>
 </context>
 <context>
     <name>FormWidget</name>
     <message>
-        <location filename="../Form_widget.py" line="99"/>
+        <location filename="../Form_widget.py" line="114" />
         <source>Proprietário(a) *</source>
-        <translation type="obsolete">Propietario *</translation>
+        <translation>Propietario(a) *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="100"/>
+        <location filename="../Form_widget.py" line="115" />
         <source>Fazenda *</source>
-        <translation type="obsolete">Granja *</translation>
+        <translation>Finca *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="101"/>
+        <location filename="../Form_widget.py" line="116" />
         <source>Talhão *</source>
-        <translation type="obsolete">Parcela *</translation>
+        <translation>Parcela *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="102"/>
+        <location filename="../Form_widget.py" line="117" />
         <source>Ano</source>
-        <translation type="obsolete">Año</translation>
+        <translation>Año</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="103"/>
+        <location filename="../Form_widget.py" line="118" />
         <source>Bordadura...</source>
-        <translation type="obsolete">Bordado...</translation>
+        <translation>Borde...</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="104"/>
+        <location filename="../Form_widget.py" line="119" />
         <source>Ano *</source>
-        <translation type="obsolete">Año *</translation>
+        <translation>Año *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="105"/>
+        <location filename="../Form_widget.py" line="120" />
         <source>Cultura *</source>
-        <translation type="obsolete">Cultura *</translation>
+        <translation>Cultivo *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="106"/>
+        <location filename="../Form_widget.py" line="121" />
         <source>Tipo de aplicação *</source>
-        <translation type="obsolete">Tipo de solicitud *</translation>
+        <translation>Tipo de aplicación *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="107"/>
+        <location filename="../Form_widget.py" line="122" />
         <source>Cancelar</source>
-        <translation type="obsolete">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="108"/>
+        <location filename="../Form_widget.py" line="123" />
         <source>Adicionar</source>
-        <translation type="obsolete">Añadir</translation>
+        <translation>Agregar</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="478"/>
+        <location filename="../Form_widget.py" line="493" />
         <source>Bordadura *</source>
-        <translation type="obsolete">Bordado *</translation>
+        <translation>Borde *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="481"/>
+        <location filename="../Form_widget.py" line="496" />
         <source>Bordadura</source>
-        <translation type="obsolete">Bordado</translation>
+        <translation>Borde</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="485"/>
+        <location filename="../Form_widget.py" line="500" />
         <source>Linhas *</source>
-        <translation type="obsolete">Líneas *</translation>
+        <translation>Líneas *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="488"/>
+        <location filename="../Form_widget.py" line="503" />
         <source>Linhas</source>
-        <translation type="obsolete">Líneas</translation>
+        <translation>Líneas</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="492"/>
+        <location filename="../Form_widget.py" line="507" />
         <source>Pontos *</source>
-        <translation type="obsolete">Puntos *</translation>
+        <translation>Puntos *</translation>
     </message>
     <message>
-        <location filename="../Form_widget.py" line="495"/>
+        <location filename="../Form_widget.py" line="510" />
         <source>Pontos</source>
-        <translation type="obsolete">Puntos</translation>
+        <translation>Puntos</translation>
     </message>
 </context>
 <context>
     <name>GeneralValues</name>
     <message>
-        <location filename="../values_window.py" line="378"/>
+        <location filename="../values_window.py" line="384" />
         <source>Avançar</source>
-        <translation type="obsolete">Siguiente</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="379"/>
+        <location filename="../values_window.py" line="385" />
         <source>Valor</source>
-        <translation type="obsolete">Valor</translation>
+        <translation>Valor</translation>
     </message>
 </context>
 <context>
     <name>Interpolate</name>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="73"/>
+        <location filename="../FileFunctions/interpolate.py" line="122" />
         <source>Selecione uma Coluna</source>
-        <translation type="obsolete">Seleccione una columna</translation>
+        <translation>Seleccione una Columna</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="114"/>
+        <location filename="../FileFunctions/interpolate.py" line="168" />
         <source>Área realizada</source>
-        <translation type="obsolete">Superficie realizada</translation>
+        <translation>Área completada</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="114"/>
+        <location filename="../FileFunctions/interpolate.py" line="168" />
         <source>(Clique para remover.)</source>
-        <translation type="obsolete">(Haga clic para eliminar.)</translation>
+        <translation>(Haga clic para eliminar.)</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="136"/>
+        <location filename="../FileFunctions/interpolate.py" line="190" />
         <source>Interpolar coluna </source>
-        <translation type="obsolete">Interpolar columna </translation>
+        <translation>Interpolando columna</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="183"/>
+        <location filename="../FileFunctions/interpolate.py" line="245" />
         <source>Gerando centroids </source>
-        <translation type="obsolete">Generación de centroides </translation>
+        <translation>Generando centroides</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="201"/>
+        <location filename="../FileFunctions/interpolate.py" line="263" />
         <source>Gerando centroids acabou</source>
-        <translation type="obsolete">La generación de centroides ha terminado</translation>
+        <translation>Generación de centroides finalizada</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="207"/>
+        <location filename="../FileFunctions/interpolate.py" line="269" />
         <source>Fazendo contorno </source>
-        <translation type="obsolete">Contorno </translation>
+        <translation>Realizando contorno</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="224"/>
+        <location filename="../FileFunctions/interpolate.py" line="286" />
         <source>Fazendo contorno acabou</source>
-        <translation type="obsolete">Se acabó el contorneado</translation>
+        <translation>Contorno finalizado</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="231"/>
+        <location filename="../FileFunctions/interpolate.py" line="293" />
         <source>Gerando interpolado </source>
-        <translation type="obsolete">Generación interpolada </translation>
+        <translation>Generando interpolado</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="248"/>
+        <location filename="../FileFunctions/interpolate.py" line="310" />
         <source>Interolando terminou</source>
-        <translation type="obsolete">Se acabó la interpolación</translation>
+        <translation>Interpolación finalizada</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="253"/>
+        <location filename="../FileFunctions/interpolate.py" line="315" />
         <source>Fazendo recorte </source>
-        <translation type="obsolete">Recortables </translation>
+        <translation>Recortando</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="268"/>
+        <location filename="../FileFunctions/interpolate.py" line="330" />
         <source>Recorte terminou</source>
-        <translation type="obsolete">Recorte terminado</translation>
+        <translation>Recorte finalizado</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/interpolate.py" line="274"/>
+        <location filename="../FileFunctions/interpolate.py" line="336" />
         <source>Convertendo para .shp...</source>
-        <translation type="obsolete">Convertir a .shp...</translation>
+        <translation>Convirtiendo a .shp...</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/interpolate.py" line="33" />
+        <source>Interpolar</source>
+        <translation>Interpolar</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/interpolate.py" line="44" />
+        <source>Interpolação não disponível para camadas de linhas. Use camadas de pontos ou polígonos com valores numéricos.</source>
+        <translation>Interpolación no disponible para capas de líneas. Use capas de puntos o polígonos con valores numéricos.</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/interpolate.py" line="55" />
+        <source>A camada não possui campos numéricos para interpolar.</source>
+        <translation>La capa no tiene campos numéricos para interpolar.</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/interpolate.py" line="70" />
+        <source>Todos os campos numéricos da camada estão vazios.</source>
+        <translation>Todos los campos numéricos de la capa están vacíos.</translation>
     </message>
 </context>
 <context>
     <name>MeanValues</name>
     <message>
-        <location filename="../values_window.py" line="275"/>
+        <location filename="../values_window.py" line="267" />
         <source>Avançar</source>
-        <translation type="obsolete">Siguiente</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="278"/>
+        <location filename="../values_window.py" line="270" />
         <source>Ajustar Média da coluna </source>
-        <translation type="obsolete">Ajustar la media de la columna</translation>
+        <translation>Ajustar Media de la columna</translation>
     </message>
 </context>
 <context>
     <name>Merge</name>
     <message>
-        <location filename="../FileFunctions/merge_layers.py" line="130"/>
+        <location filename="../FileFunctions/merge_layers.py" line="159" />
         <source>Escolha um mapa para unir</source>
-        <translation type="obsolete">Elige un mapa para unirte</translation>
+        <translation>Elija un mapa para unir</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/merge_layers.py" line="139"/>
+        <location filename="../FileFunctions/merge_layers.py" line="177" />
         <source>Salvar</source>
-        <translation type="obsolete">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/merge_layers.py" line="165"/>
+        <location filename="../FileFunctions/merge_layers.py" line="203" />
         <source>Selecione a(s) coluna(s) que deseja unir</source>
-        <translation type="obsolete">Seleccione la(s) columna(s) que desea unir</translation>
+        <translation>Seleccione la(s) columna(s) que desea unir</translation>
     </message>
     <message>
-        <location filename="../FileFunctions/merge_layers.py" line="175"/>
+        <location filename="../FileFunctions/merge_layers.py" line="216" />
         <source> (ATUAL)</source>
-        <translation type="obsolete"> (ACTUAL)</translation>
+        <translation>(ACTUAL)</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/merge_layers.py" line="95" />
+        <source>Aviso</source>
+        <translation>Advertencia</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/merge_layers.py" line="95" />
+        <source>Selecione um mapa para unir.</source>
+        <translation>Seleccione un mapa para unir.</translation>
+    </message>
+    <message>
+        <location filename="../FileFunctions/merge_layers.py" line="147" />
+        <source>Erro ao unir camadas</source>
+        <translation>Error al unir capas</translation>
+    </message>
+</context>
+<context>
+    <name>Messages</name>
+    <message>
+        <location filename="../message.py" line="8" />
+        <source>Preencha todos os campos.</source>
+        <translation>Complete todos los campos.</translation>
+    </message>
+    <message>
+        <location filename="../message.py" line="11" />
+        <source>O valor do campo não pode</source>
+        <translation>El valor del campo no puede</translation>
+    </message>
+    <message>
+        <location filename="../message.py" line="11" />
+        <source>ser só numérico.</source>
+        <translation>ser solo numérico.</translation>
     </message>
 </context>
 <context>
     <name>PrintPDF</name>
     <message>
-        <location filename="../File_options.py" line="403"/>
+        <location filename="../File_options.py" line="403" />
         <source>Unidade: kg/ha</source>
         <translation type="obsolete">Unidad: kg/ha</translation>
+    </message>
+    <message>
+        <location filename="../File_options.py" line="388" />
+        <source>Unidade: </source>
+        <translation>Unidad:</translation>
     </message>
 </context>
 <context>
     <name>Rate</name>
     <message>
-        <location filename="../FileFunctions/adjust_rate.py" line="46"/>
+        <location filename="../FileFunctions/adjust_rate.py" line="50" />
         <source>Taxas &gt; Selecione uma coluna</source>
-        <translation type="obsolete">Tarifas &gt; Seleccione una columna</translation>
+        <translation>Tasas &gt; Seleccione una columna</translation>
     </message>
 </context>
 <context>
     <name>SmallerValues</name>
     <message>
-        <location filename="../values_window.py" line="123"/>
+        <location filename="../values_window.py" line="136" />
         <source>Avançar</source>
-        <translation type="obsolete">Siguiente</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="126"/>
+        <location filename="../values_window.py" line="139" />
         <source>Excluir Valores MENORES que:</source>
-        <translation type="obsolete">Excluir valores MENOS DE:</translation>
+        <translation>Excluir Valores MENORES que:</translation>
     </message>
     <message>
-        <location filename="../values_window.py" line="126"/>
+        <location filename="../values_window.py" line="139" />
         <source> e </source>
-        <translation type="obsolete"> y </translation>
+        <translation>y</translation>
+    </message>
+</context>
+<context>
+    <name>StaraMaps</name>
+    <message>
+        <location filename="../StaraMaps.py" line="214" />
+        <source>&amp;StaraMaps</source>
+        <translation>&amp;StaraMaps</translation>
+    </message>
+    <message>
+        <location filename="../StaraMaps.py" line="193" />
+        <source>Este plugin requer QGIS 3.40 ou superior. Versão atual: {}</source>
+        <translation>Este plugin requiere QGIS 3.40 o superior. Versión actual: {}</translation>
     </message>
 </context>
 <context>
     <name>StaraMapsDialog</name>
     <message>
-        <location filename="../StaraMaps_dialog.py" line="61"/>
+        <location filename="../StaraMaps_dialog.py" line="64" />
         <source>Arraste e solte o arquivo</source>
         <translation>Arrastre y suelte el archivo</translation>
     </message>
     <message>
-        <location filename="../StaraMaps_dialog.py" line="62"/>
+        <location filename="../StaraMaps_dialog.py" line="65" />
         <source>ou</source>
         <translation>o</translation>
     </message>
     <message>
-        <location filename="../StaraMaps_dialog.py" line="63"/>
+        <location filename="../StaraMaps_dialog.py" line="66" />
         <source>Carregar</source>
         <translation>Carga</translation>
     </message>
     <message>
-        <location filename="../StaraMaps_dialog.py" line="209"/>
+        <location filename="../StaraMaps_dialog.py" line="205" />
         <source>Aviso</source>
         <translation>Advertencia</translation>
     </message>
     <message>
-        <location filename="../StaraMaps_dialog.py" line="209"/>
+        <location filename="../StaraMaps_dialog.py" line="205" />
         <source>Nenhuma Layer Selecionada.</source>
         <translation>No hay layer seleccionada.</translation>
     </message>
@@ -496,484 +602,533 @@
 <context>
     <name>TextInfoTest</name>
     <message>
-        <location filename="../qgisFuncs.py" line="825"/>
+        <location filename="../qgisFuncs.py" line="807" />
         <source>Ajustar Média</source>
-        <translation type="obsolete">Ajustar la media</translation>
+        <translation>Ajustar Media</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="825"/>
+        <location filename="../qgisFuncs.py" line="807" />
         <source>Função que realiza o ajuste de todos os valores a partir de uma nova média dos valores, isso acrescentará um valor proporcional entre a diferença da média original para adicionada.</source>
-        <translation type="obsolete">Función que ajusta todos los valores basándose en una nueva media de los valores, añadiendo un valor proporcional entre la diferencia entre la media original y la media añadida.</translation>
+        <translation>Función que ajusta todos los valores a partir de una nueva media, añadiendo un valor proporcional entre la diferencia de la media original y la agregada.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="825"/>
+        <location filename="../qgisFuncs.py" line="807" />
         <source>1° - Selecione a coluna para realizar o ajuste.</source>
-        <translation type="obsolete">1ª - Seleccione la columna para realizar el ajuste.</translation>
+        <translation>1º - Seleccione la columna para ajustar.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="825"/>
+        <location filename="../qgisFuncs.py" line="807" />
         <source>2º - Adicione o valor da nova média.</source>
-        <translation type="obsolete">2º - Añade el valor de la nueva media.</translation>
+        <translation>2º - Agregue el valor de la nueva media.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="825"/>
+        <location filename="../qgisFuncs.py" line="807" />
         <source>3º - Clique em Avançar e os valores serão ajustados.</source>
-        <translation type="obsolete">3º - Pulse Siguiente y se ajustarán los valores.</translation>
+        <translation>3º - Haga clic en Siguiente y los valores serán ajustados.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>Editar Colunas</source>
-        <translation type="obsolete">Editar columnas</translation>
+        <translation>Editar Columnas</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>Essa função permite criar ou excluir colunas de informações, no caso de criar o usuário pode escolher a informação para ser preenchida na nova coluna:</source>
-        <translation type="obsolete">Esta función permite crear o eliminar columnas de información, en el caso de crear el usuario puede elegir la información a rellenar en la nueva columna:</translation>
+        <translation>Esta función permite crear o eliminar columnas de información. Al crear, el usuario puede elegir la información para completar la nueva columna:</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>Criar coluna</source>
-        <translation type="obsolete">Crear columna</translation>
+        <translation>Crear columna</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>1° - Selecione a opção criar.</source>
-        <translation type="obsolete">1º - Seleccione la opción crear.</translation>
+        <translation>1º - Seleccione la opción crear.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>2º - Atribua um nome a nova coluna.</source>
-        <translation type="obsolete">2º - Dé un nombre a la nueva columna.</translation>
+        <translation>2º - Asigne un nombre a la nueva columna.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>3º - Defina um novo valor a coluna.</source>
-        <translation type="obsolete">3º - Establecer un nuevo valor para la columna.</translation>
+        <translation>3º - Defina un nuevo valor para la columna.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>Excluir coluna</source>
-        <translation type="obsolete">Borrar columna</translation>
+        <translation>Eliminar columna</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>1° - Selecione a coluna que deseja excluir.</source>
-        <translation type="obsolete">1° - Seleccione la columna que desea suprimir.</translation>
+        <translation>1º - Seleccione la columna que desea eliminar.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="854"/>
+        <location filename="../qgisFuncs.py" line="858" />
         <source>2º - Selecione o ícone da lixeira para excluir a coluna selecionada.</source>
-        <translation type="obsolete">2º - Seleccione el icono de la papelera para borrar la columna seleccionada.</translation>
+        <translation>2º - Seleccione el ícono de papelera para eliminar la columna seleccionada.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>Interpolar Layer</source>
-        <translation type="obsolete">Capa de interpolación</translation>
+        <translation>Interpolar Capa</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>Essa função permite realizar uma interpolação do tipo IDW para uma malha de pontos.</source>
-        <translation type="obsolete">Esta función permite realizar una interpolación de tipo IDW para una malla de puntos.</translation>
+        <translation>Esta función realiza una interpolación IDW para una malla de puntos.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>1° - Selecione a coluna de dados para interpolação.</source>
-        <translation type="obsolete">1ª - Seleccione la columna de datos a interpolar.</translation>
+        <translation>1º - Seleccione la columna de datos para la interpolación.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>2º - Defina os valores de coeficiente e tamanho de Pixel (metros).</source>
-        <translation type="obsolete">2º - Ajustar los valores de coeficiente y tamaño de píxel (metros).</translation>
+        <translation>2º - Defina el coeficiente y el tamaño del píxel (metros).</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>3° - Para delimitar a área da interpolação, podendo ser manual a critério do usuário, caso não realizada será feita de forma automática, ou pode ser carregada a partir de um arquivo de contorno já criado.</source>
-        <translation type="obsolete">3° - Para delimitar la zona de interpolación, que puede hacerse manualmente a criterio del usuario, si no se hace automáticamente, o puede cargarse a partir de un fichero de contorno ya creado.</translation>
+        <translation>3º - Para delimitar el área de interpolación: manual, automático o cargado desde un archivo de contorno existente.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>4° - Após definidos os critérios basta clicar em Interpolar.</source>
-        <translation type="obsolete">4 - Una vez definidos los criterios, haga clic en Interpolar.</translation>
+        <translation>4º - Tras definir los criterios, haga clic en Interpolar.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="882"/>
+        <location filename="../qgisFuncs.py" line="886" />
         <source>5° - Será criada uma nova camada interpolada no mesmo grupo da camada base, com o sufixo [Interpolated].</source>
-        <translation type="obsolete">5 - Se creará una nueva capa interpolada en el mismo grupo que la capa base, con el sufijo [Interpolada].</translation>
+        <translation>5º - Se creará una nueva capa interpolada en el mismo grupo, con el sufijo [Interpolated].</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="902"/>
+        <location filename="../qgisFuncs.py" line="906" />
         <source>Resetar Layer</source>
-        <translation type="obsolete">Restablecer capa</translation>
+        <translation>Restablecer Capa</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="902"/>
+        <location filename="../qgisFuncs.py" line="906" />
         <source>Essa função é usada quando a layer é modificada e por alguma razão seja necessário retornar para o estado original da layer. Esse estado é salvo em forma de backup assim que a layer é importada para visualização.</source>
-        <translation type="obsolete">Esta función se utiliza cuando se modifica la capa y por alguna razón es necesario volver al estado original de la capa. Este estado se guarda como copia de seguridad en cuanto se importa la capa para su visualización.</translation>
+        <translation>Esta función se usa cuando la capa es modificada y se necesita volver al estado original. El estado original se guarda como respaldo al importar la capa.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>Zonas de manejo</source>
-        <translation type="obsolete">Zonas de gestión</translation>
+        <translation>Zonas de manejo</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>Esta função permite criar zonas de manejo a partir de uma classificação dos valores presentes na camada, podendo ser utilizados para criar mapas de aplicação em taxa variável.</source>
-        <translation type="obsolete">Esta función permite crear zonas de gestión basadas en una clasificación de los valores presentes en la capa, que pueden utilizarse para crear mapas de aplicación de dosis variable.</translation>
+        <translation>Esta función permite crear zonas de manejo a partir de una clasificación de valores de la capa, para crear mapas de aplicación a tasa variable.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>1° - Selecione a coluna base que servirá de referência.</source>
-        <translation type="obsolete">1ª - Seleccione la columna base que servirá de referencia.</translation>
+        <translation>1º - Seleccione la columna base de referencia.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>2º - Defina o número de zonas de manejo.</source>
-        <translation type="obsolete">2º - Definir el número de zonas de gestión.</translation>
+        <translation>2º - Defina el número de zonas de manejo.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>3° - Adicione os valores desejados de acordo com a zona de manejo.</source>
-        <translation type="obsolete">3° - Añadir los valores deseados según la zona de gestión.</translation>
+        <translation>3º - Agregue los valores deseados según la zona de manejo.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="923"/>
+        <location filename="../qgisFuncs.py" line="927" />
         <source>4° - Após preenchimento clique em OK para criar as zonas de manejo.</source>
-        <translation type="obsolete">4° - Una vez rellenado, haga clic en OK para crear las zonas de gestión.</translation>
+        <translation>4º - Tras completar, haga clic en OK para crear las zonas de manejo.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="946"/>
+        <location filename="../qgisFuncs.py" line="950" />
         <source>Exportar Layer</source>
-        <translation type="obsolete">Capa de exportación</translation>
+        <translation>Exportar Capa</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="946"/>
+        <location filename="../qgisFuncs.py" line="950" />
         <source>Função responsável por exportar a layer no formato escolhido:</source>
-        <translation type="obsolete">Función responsable de exportar la capa en el formato elegido:</translation>
+        <translation>Función responsable de exportar la capa en el formato elegido:</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="946"/>
+        <location filename="../qgisFuncs.py" line="950" />
         <source>1° - Selecione um local para salvar o arquivo.</source>
-        <translation type="obsolete">1ª - Seleccione una ubicación para guardar el archivo.</translation>
+        <translation>1º - Seleccione una ubicación para guardar el archivo.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="946"/>
+        <location filename="../qgisFuncs.py" line="950" />
         <source>2º - Escolha o formato que deseja salvar.</source>
-        <translation type="obsolete">2º - Elija el formato en el que desea guardar.</translation>
+        <translation>2º - Elija el formato de guardado.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="946"/>
+        <location filename="../qgisFuncs.py" line="950" />
         <source>3° - Arquivo é salvo.</source>
-        <translation type="obsolete">3° - Se guarda el archivo.</translation>
+        <translation>3º - El archivo es guardado.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Ajustar Taxas da Layer</source>
-        <translation type="obsolete">Ajustar tasas de capa</translation>
+        <translation>Ajustar Tasas de la Capa</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Função responsável por alterar as taxas da camada em edição.</source>
-        <translation type="obsolete">Función encargada de modificar los índices de la capa que se está editando.</translation>
+        <translation>Función responsable de modificar las tasas de la capa en edición.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>1º - Selecione a coluna em que se deseja alterar os valores.</source>
-        <translation type="obsolete">1º - Seleccione la columna en la que desea modificar los valores.</translation>
+        <translation>1º - Seleccione la columna cuyos valores desea cambiar.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>2º - Se preferir delimitar apenas uma área do mapa, a função disponibiliza o recurso de seleção específica, basta criar um polígono em torno da área, caso isso não seja operado, as alterações serão aplicadas para toda a camada.</source>
-        <translation type="obsolete">2º - Si prefiere delimitar sólo un área del mapa, la función proporciona la característica de selección específica, sólo tiene que crear un polígono alrededor del área, si no hace esto, los cambios se aplicarán a toda la capa.</translation>
+        <translation>2º - Para delimitar un área específica, use la selección para dibujar un polígono. Si no se usa, los cambios se aplican a toda la capa.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>3º - Escolha a função que deseja aplicar*.</source>
-        <translation type="obsolete">3º - Elija la función que desea aplicar*.</translation>
+        <translation>3º - Elija la función a aplicar*.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>4º - Na janela, adicione o valor.</source>
-        <translation type="obsolete">4º - En la ventana, añada el valor.</translation>
+        <translation>4º - En la ventana, agregue el valor.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>5º - Clique em {}</source>
-        <translation type="obsolete">5º - Haga clic en {}</translation>
+        <translation>5º - Haga clic en {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Avançar</source>
-        <translation type="obsolete">Siguiente</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>6º - A taxa da camada ou da seleção específica será alterada.</source>
-        <translation type="obsolete">6 - Se modificará el nivel o la tasa de selección específica.</translation>
+        <translation>6º - La tasa de la capa o selección específica será modificada.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>*Funções disponíveis:</source>
-        <translation type="obsolete">*Funciones disponibles:</translation>
+        <translation>*Funciones disponibles:</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Excluir valores MENORES QUE {}</source>
-        <translation type="obsolete">Excluir valores MENOS DE {}</translation>
+        <translation>Excluir valores MENORES QUE {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>valor</source>
-        <translation type="obsolete">valor</translation>
+        <translation>valor</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Excluir valores ENTRE {} {}</source>
-        <translation type="obsolete">Excluir valores ENTRE {} {}</translation>
+        <translation>Excluir valores ENTRE {} {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>valor inferior</source>
-        <translation type="obsolete">valor inferior</translation>
+        <translation>valor inferior</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>valor superior</source>
-        <translation type="obsolete">valor superior</translation>
+        <translation>valor superior</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Excluir valores MAIORES QUE {}</source>
-        <translation type="obsolete">Excluir valores MAYORES QUE {}</translation>
+        <translation>Excluir valores MAYORES QUE {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="976"/>
+        <location filename="../qgisFuncs.py" line="980" />
         <source>Substituir valores em uma área específica {}</source>
-        <translation type="obsolete">Reemplazar valores en un área específica {}</translation>
+        <translation>Reemplazar valores en un área específica {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>Imprimir Layer</source>
-        <translation type="obsolete">Capa de impresión</translation>
+        <translation>Imprimir Capa</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>Função responsável por imprimir a layer, é necessário selecionar um local para salvar, também é possível selecionar uma imagem se sua preferência para anexar junto ao documento.</source>
-        <translation type="obsolete">La función responsable de la impresión de la capa, es necesario seleccionar una ubicación para guardarlo, también puede seleccionar una imagen de su elección para adjuntar al documento.</translation>
+        <translation>Función responsable de imprimir la capa. Seleccione una ubicación para guardar. También puede adjuntar una imagen.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>1º - Selecione um local para salvar o arquivo.</source>
-        <translation type="obsolete">1º - Seleccione una ubicación para guardar el archivo.</translation>
+        <translation>1º - Seleccione una ubicación para guardar el archivo.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>2º - Selecione uma imagem, se preferir.(UTM)</source>
-        <translation type="obsolete">2º - Seleccione una imagen si lo prefiere (UTM)</translation>
+        <translation>2º - Seleccione una imagen si lo prefiere. (UTM)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>3º - Clique em imprimir.</source>
-        <translation type="obsolete">3º - Haga clic en imprimir.</translation>
+        <translation>3º - Haga clic en imprimir.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1007"/>
+        <location filename="../qgisFuncs.py" line="1011" />
         <source>4º - O pdf será salvo e automaticamente aberto.</source>
-        <translation type="obsolete">4º - El pdf se guardará y se abrirá automáticamente.</translation>
+        <translation>4º - El PDF será guardado y abierto automáticamente.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>Unir Layers</source>
-        <translation type="obsolete">Unir capas</translation>
+        <translation>Unir Capas</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>Função responsável por unir 2 layers:</source>
-        <translation type="obsolete">Función responsable de unir 2 capas:</translation>
+        <translation>Función responsable de unir 2 capas:</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>1º - Selecione um local para salvar a nova layer.</source>
-        <translation type="obsolete">1º - Seleccione una ubicación para guardar la nueva capa.</translation>
+        <translation>1º - Seleccione una ubicación para guardar la nueva capa.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>2º - Selecione um mapa para unir com a layer atual.(UTM)</source>
-        <translation type="obsolete">2º - Seleccionar un mapa para fusionar con la capa actual (UTM)</translation>
+        <translation>2º - Seleccione un mapa para unir con la capa actual. (UTM)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>3º - Selecione as colunas que deseja unir.</source>
-        <translation type="obsolete">3º - Seleccione las columnas que desea unir.</translation>
+        <translation>3º - Seleccione las columnas que desea unir.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>4º - Clique em {}</source>
-        <translation type="obsolete">4º - Haga clic en {}</translation>
+        <translation>4º - Haga clic en {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>Unir Mapas</source>
-        <translation type="obsolete">Unir mapas</translation>
+        <translation>Unir Mapas</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1055"/>
+        <location filename="../qgisFuncs.py" line="1059" />
         <source>5º - Uma nova layer será adicionada no grupo da layer atual. {}</source>
-        <translation type="obsolete">5º - Se añadirá una nueva capa al grupo de capas actual. {}</translation>
+        <translation>5º - Se añadirá una nueva capa al grupo de la capa actual. {}</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>Valor Geral</source>
-        <translation type="obsolete">Valor general</translation>
+        <translation>Valor General</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>Esta função permite somar ou subtrair um valor numérico do mapa de taxa variável.</source>
-        <translation type="obsolete">Esta función permite sumar o restar un valor numérico al mapa de tasa variable.</translation>
+        <translation>Esta función permite sumar o restar un valor numérico al mapa de tasa variable.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>1º - Selecione a coluna que deseja alterar os valores.</source>
-        <translation type="obsolete">1º - Seleccione la columna cuyos valores desea modificar.</translation>
+        <translation>1º - Seleccione la columna cuyos valores desea cambiar.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>2º - Se desejar somar um valor basta inseri-lo, caso deseje realizar uma subtração o valor de conter o sinal - seguido do valor.</source>
-        <translation type="obsolete">2º - Si quiere sumar un valor, sólo tiene que introducirlo; si quiere restar, el valor debe contener el signo - seguido del valor.</translation>
+        <translation>2º - Para sumar un valor, simplemente ingréselo. Para restar, ingrese el signo menos (-) seguido del valor.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>3º - Clique em {} e os valores de todo o mapa serão alterados.</source>
-        <translation type="obsolete">3º - Haga clic en {} y se cambiarán los valores de todo el mapa.</translation>
+        <translation>3º - Haga clic en {} y los valores del mapa serán modificados.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1077"/>
+        <location filename="../qgisFuncs.py" line="1081" />
         <source>avançar</source>
-        <translation type="obsolete">avanzando</translation>
+        <translation>siguiente</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1099"/>
+        <location filename="../qgisFuncs.py" line="1103" />
         <source>Excluir valores menores que</source>
-        <translation type="obsolete">Excluir los valores inferiores a</translation>
+        <translation>Excluir valores menores que</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1099"/>
+        <location filename="../qgisFuncs.py" line="1103" />
         <source>Exclui valores menores que o informado, pode ser do mapa completo ou apenas de uma determinada área</source>
-        <translation type="obsolete">Excluye valores menores que el introducido, puede ser todo el mapa o sólo una zona determinada</translation>
+        <translation>Excluye valores menores al indicado, del mapa completo o de un área específica.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>1º - Selecionar o contorno da área de interesse na aba de seleção (opcional)</source>
-        <translation type="obsolete">1º - Seleccione el contorno del área de interés en la pestaña de selección (opcional)</translation>
+        <translation>1º - Seleccionar el contorno del área de interés en la pestaña de selección (opcional)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1099"/>
+        <location filename="../qgisFuncs.py" line="1103" />
         <source>2º - Clique sobre o ícone da função (&lt;)</source>
-        <translation type="obsolete">2º - Haga clic en el icono de función (&lt;)</translation>
+        <translation>2º - Haga clic en el ícono de la función (&lt;)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1145"/>
+        <location filename="../qgisFuncs.py" line="1149" />
         <source>3º - Informe o valor de corte</source>
-        <translation type="obsolete">3º - Introducir el valor de corte</translation>
+        <translation>3º - Ingrese el valor de corte</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>4º - Clique sobre o ícone (Avançar)</source>
-        <translation type="obsolete">4º - Haga clic en el icono (Siguiente)</translation>
+        <translation>4º - Haga clic en el ícono (Siguiente)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1122"/>
+        <location filename="../qgisFuncs.py" line="1126" />
         <source>Excluir valores entre o intervalo</source>
-        <translation type="obsolete">Excluir los valores comprendidos entre</translation>
+        <translation>Excluir valores en el intervalo</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1122"/>
+        <location filename="../qgisFuncs.py" line="1126" />
         <source>Exclui valores entre um intervalo informado, pode ser do mapa completo ou apenas de uma determinada área</source>
-        <translation type="obsolete">Excluye los valores comprendidos en un intervalo especificado, que puede ser todo el mapa o sólo una zona determinada</translation>
+        <translation>Excluye valores dentro de un intervalo, del mapa completo o de un área específica.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1122"/>
+        <location filename="../qgisFuncs.py" line="1126" />
         <source>2º - Clique sobre o ícone da função (&lt;-&gt;)</source>
-        <translation type="obsolete">2º - Haga clic en el icono de función (&lt;-&gt;)</translation>
+        <translation>2º - Haga clic en el ícono de la función (&lt;-&gt;)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1122"/>
+        <location filename="../qgisFuncs.py" line="1126" />
         <source>3º - Informe os valores de corte inferior e superior</source>
-        <translation type="obsolete">3º - Introducir los valores de corte inferior y superior</translation>
+        <translation>3º - Ingrese los valores de corte inferior y superior</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1145"/>
+        <location filename="../qgisFuncs.py" line="1149" />
         <source>Excluir valores maiores que</source>
-        <translation type="obsolete">Excluir los valores superiores a</translation>
+        <translation>Excluir valores mayores que</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1145"/>
+        <location filename="../qgisFuncs.py" line="1149" />
         <source>Exclui valores maiores que o informado, pode ser do mapa completo ou apenas de uma determinada área</source>
-        <translation type="obsolete">Excluye valores superiores al introducido, puede ser todo el mapa o sólo una zona determinada</translation>
+        <translation>Excluye valores mayores al indicado, del mapa completo o de un área específica.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1145"/>
+        <location filename="../qgisFuncs.py" line="1149" />
         <source>2º - Clique sobre o ícone da função (&gt;)</source>
-        <translation type="obsolete">2º - Pulse sobre el icono de función (&gt;)</translation>
+        <translation>2º - Haga clic en el ícono de la función (&gt;)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1162"/>
+        <location filename="../qgisFuncs.py" line="1166" />
         <source>Redefinir</source>
-        <translation type="obsolete">Restablecer</translation>
+        <translation>Restablecer</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1162"/>
+        <location filename="../qgisFuncs.py" line="1166" />
         <source>Redefine todos os pontos da área de seleção</source>
-        <translation type="obsolete">Restablece todos los puntos del área de selección</translation>
+        <translation>Restablece todos los puntos del área de selección</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1174"/>
+        <location filename="../qgisFuncs.py" line="1178" />
         <source>Minimizar/Maximizar janela</source>
-        <translation type="obsolete">Ventana Minimizar/Maximizar</translation>
+        <translation>Minimizar/Maximizar ventana</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1174"/>
+        <location filename="../qgisFuncs.py" line="1178" />
         <source>Minimizar/Maximizar janela de seleção</source>
-        <translation type="obsolete">Ventana de selección Minimizar/Maximizar</translation>
+        <translation>Minimizar/Maximizar ventana de selección</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1186"/>
+        <location filename="../qgisFuncs.py" line="1190" />
         <source>Confirmar</source>
-        <translation type="obsolete">Confirme</translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1186"/>
+        <location filename="../qgisFuncs.py" line="1190" />
         <source>Confirmar área desenhada</source>
-        <translation type="obsolete">Confirmar área dibujada</translation>
+        <translation>Confirmar área dibujada</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1198"/>
+        <location filename="../qgisFuncs.py" line="1202" />
         <source>Retornar último ponto</source>
-        <translation type="obsolete">Volver al punto anterior</translation>
+        <translation>Deshacer último punto</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1198"/>
+        <location filename="../qgisFuncs.py" line="1202" />
         <source>Redefine o último ponto criado na área de seleção</source>
-        <translation type="obsolete">Restablece el último punto creado en el área de selección</translation>
+        <translation>Elimina el último punto creado en el área de selección</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>Inserir/substituir valores</source>
-        <translation type="obsolete">Insertar/sustituir valores</translation>
+        <translation>Insertar/reemplazar valores</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>Insere novos valores aos polígonos, pode ser do mapa completo ou apenas de uma determinada área.</source>
-        <translation type="obsolete">Añade nuevos valores a los polígonos, ya sea para todo el mapa o sólo para un área determinada.</translation>
+        <translation>Inserta nuevos valores en los polígonos, del mapa completo o de un área específica.</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>2º - Clique sobre o ícone da função (+)</source>
-        <translation type="obsolete">2º - Haga clic en el icono de función (+)</translation>
+        <translation>2º - Haga clic en el ícono de la función (+)</translation>
     </message>
     <message>
-        <location filename="../qgisFuncs.py" line="1216"/>
+        <location filename="../qgisFuncs.py" line="1220" />
         <source>3º - Informe o novo valor</source>
-        <translation type="obsolete">3º - Introduzca el nuevo valor</translation>
+        <translation>3º - Ingrese el nuevo valor</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>Criar Bordadura</source>
+        <translation>Crear Borde</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>Função que cria um nova área a partir da localização de outra área próxima.</source>
+        <translation>Función que crea una nueva área a partir de la ubicación de otra área cercana.</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>1° - Faça o contorno da área que deseja criar.</source>
+        <translation>1º - Trace el contorno del área que desea crear.</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>2º - Clique no botão confirmar</source>
+        <translation>2º - Haga clic en el botón confirmar</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>3º - Digite o nome</source>
+        <translation>3º - Escriba el nombre</translation>
+    </message>
+    <message>
+        <location filename="../qgisFuncs.py" line="828" />
+        <source>4º - Clique em avançar</source>
+        <translation>4º - Haga clic en siguiente</translation>
+    </message>
+</context>
+<context>
+    <name>InfoWindow</name>
+    <message>
+        <source>Iniciando...</source>
+        <translation>Iniciando...</translation>
+    </message>
+    <message>
+        <source>Erro</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <source>Concluído</source>
+        <translation>Completado</translation>
+    </message>
+    <message>
+        <source>Instalação finalizada!</source>
+        <translation>¡Instalación completa!</translation>
     </message>
 </context>
 </TS>

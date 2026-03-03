@@ -1,4 +1,4 @@
-from qgis.PyQt.QtCore import QObject, pyqtSlot
+from qgis.PyQt.QtCore import QObject, pyqtSlot, QCoreApplication
 from qgis._core import QgsAggregateCalculator
 
 from ..canvas.map_canvas import RateMapCanvas
@@ -7,6 +7,10 @@ from ..values_window import BiggerValues, SmallerValues, BetweenValues, ChangeMV
 
 
 class Rate(QObject):
+
+    def tr(self, message):
+        return QCoreApplication.translate('Rate', message)
+
     def __init__(self, main=None):
         super().__init__()
         self.main = main
