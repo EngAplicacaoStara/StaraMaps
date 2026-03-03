@@ -1,0 +1,8 @@
+# Arquivos excluídos do zip gerado por git archive
+release.bat     export-ignore
+Makefile        export-ignore
+.gitattributes  export-ignore
+plugin_upload.py export-ignore
+run_tranlation.py export-ignore
+scripts/        export-ignore
+help/           export-ignore
