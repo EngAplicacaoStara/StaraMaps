@@ -1,11 +1,11 @@
-﻿# This file contains metadata for your plugin.
+# This file contains metadata for your plugin.
 
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
 name=Stara Maps
-qgisMinimumversion=1.2.3
-description=Plugin para organizar arquivos de agricultura de precisÃ£o, facilitando a organizaÃ§Ã£o de mapas e arquivos em geral.
+qgisMinimumVersion=3.40
+description=Plugin para organizar arquivos de agricultura de precisão, facilitando a organização de mapas e arquivos em geral.
 version=1.2.3
 author=Stara
 email=engaplicacao@stara.com.br
@@ -44,4 +44,3 @@ Category of the plugin: Raster, Vector, Database or Web
 
 # If the plugin can run on QGIS Server.
 server=False
-

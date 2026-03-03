@@ -69,8 +69,8 @@ if defined HAS_UNTRACKED_PY (
 :: ── 4. Atualizar versao no metadata.txt ──────────
 echo.
 echo Atualizando metadata.txt  ^(version=!VERSION!^)...
-powershell -NoProfile -Command ^
-    "(Get-Content 'metadata.txt') -replace '^version=.*', 'version=!VERSION!' | Set-Content 'metadata.txt' -Encoding UTF8"
+set _VER=!VERSION!
+python -c "import re,os; v=os.environ['_VER']; c=open('metadata.txt','r',encoding='utf-8').read(); c=re.sub(r'^version=.*$',f'version={v}',c,flags=re.MULTILINE); open('metadata.txt','w',encoding='utf-8',newline='\n').write(c)"
 if errorlevel 1 (
     echo ERRO: Falha ao atualizar metadata.txt
     goto :fail
