@@ -29,13 +29,6 @@ if errorlevel 1 (
 set TAG=v!VERSION!
 set ZIPNAME=StaraMaps_!VERSION!.zip
 
-:: ── 2. Verificar se tag já existe ────────────────
-git tag -l "!TAG!" | findstr /c:"!TAG!" > nul
-if not errorlevel 1 (
-    echo ERRO: Tag !TAG! ja existe. Escolha outra versao.
-    goto :fail
-)
-
 echo.
 echo  Versao : !VERSION!
 echo  Tag    : !TAG!
@@ -83,6 +76,13 @@ goto :fail
 
 :: ── Fluxo completo: commit + tag + zip ───────────
 :full_release
+
+:: Verificar se tag já existe (só relevante ao commitar)
+git tag -l "!TAG!" | findstr /c:"!TAG!" > nul
+if not errorlevel 1 (
+    echo ERRO: Tag !TAG! ja existe. Escolha outra versao.
+    goto :fail
+)
 
 echo.
 echo Atualizando metadata.txt  ^(version=!VERSION!^)...
