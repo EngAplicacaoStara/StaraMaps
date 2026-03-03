@@ -6,7 +6,7 @@
 name=Stara Maps
 qgisMinimumVersion=3.40
 description=Plugin para organizar arquivos de agricultura de precisão, facilitando a organização de mapas e arquivos em geral.
-version=1.2.3
+version=1.2.4
 author=Stara
 email=engaplicacao@stara.com.br
 
