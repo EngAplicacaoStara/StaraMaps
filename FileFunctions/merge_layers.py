@@ -5,6 +5,9 @@ import processing
 from qgis.PyQt.QtCore import QObject, pyqtSlot, QSize, Qt, QThread, pyqtSignal
 from qgis.PyQt.QtWidgets import QFileDialog, QListWidgetItem
 
+from qgis.core import Qgis
+from qgis.utils import iface
+
 from ..loading import Loading
 from ..File_widget import FileWidget
 from ..qgisFuncs import get_layer_copy, list_groups_linked_to_layer, CustomColumn, print_log, MyFeedBack
@@ -12,6 +15,7 @@ from ..qgisFuncs import get_layer_copy, list_groups_linked_to_layer, CustomColum
 
 class MergeThread(QThread):
     finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)
 
     def __init__(self, res_columns_layer1, res_columns_layer2, out_file):
         super().__init__()
@@ -28,7 +32,9 @@ class MergeThread(QThread):
 
             processing.run('qgis:mergevectorlayers', params, feedback=self.feed)
         except Exception as e:
-            print(e)
+            print_log(self, self.run, msg=str(e))
+            self.error_signal.emit(str(e))
+            return
 
         self.finished_signal.emit()
 
@@ -42,15 +48,27 @@ class Merge(QObject):
         self.init()
 
     def init(self) -> None:
-        self.main.pushButton_return.clicked.connect(lambda: self.deleteLater())
+        for btn, sig in (
+            (self.main.pushButton_return, 'clicked'),
+            (self.main.findPath_join, 'clicked'),
+            (self.main.join_button, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        try:
+            self.main.listWidget_chose.itemClicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
 
+        self.main.pushButton_return.clicked.connect(lambda: self.deleteLater())
         self.main.back_button_hide_signal.emit()
         self.main.stackedWidget.setCurrentIndex(1)
         home = str(Path.home())
         self.main.currentPath_join.setText(home)
 
         for item in self.main.itens:
-            # print()
             if item.filename != self.main.file_widget.filename and \
                     item.layer.geometryType() == self.main.layer.geometryType():
                 item_widget = QListWidgetItem()
@@ -73,6 +91,13 @@ class Merge(QObject):
         self.main.listWidget_chose.itemClicked[QListWidgetItem].connect(self.on_item_click)
 
     def merge_maps(self) -> None:
+        if self.layer_to_uni is None:
+            iface.messageBar().pushMessage(
+                self.tr("Aviso"), self.tr("Selecione um mapa para unir."),
+                level=Qgis.Warning, duration=3
+            )
+            return
+
         itens_layer1 = [
             self.main.listWidget_layer1_flds.itemWidget(self.main.listWidget_layer1_flds.item(x)).combobox.currentText()
             for x in range(self.main.listWidget_layer1_flds.count()) if
@@ -91,16 +116,12 @@ class Merge(QObject):
         res_columns_layer2 = self.delete_columns(layer_copy_2, itens=itens_layer2)
 
         directory = '[' + self.main.layer_name + ']' + '[' + self.layer_to_uni.name() + ']' + "_merged"
-        parent_dir = self.main.layer.dataProvider().dataSourceUri().split('/')
-        new_dir = '/'.join(parent_dir[:-1])
-
-        path = os.path.join(new_dir, directory)
-        new_path = os.path.join(self.main.currentPath_join.text(), path)
+        new_path = os.path.join(self.main.currentPath_join.text(), directory)
 
         if not os.path.exists(new_path):
             os.mkdir(new_path)
 
-        out_file = new_path + f"/{directory}.shp"
+        out_file = os.path.join(new_path, directory + ".shp")
 
         self.loading = Loading(self.main.join_button)
         self.loading.start()
@@ -108,10 +129,11 @@ class Merge(QObject):
 
         self.merge_thread = MergeThread(res_columns_layer1, res_columns_layer2, out_file)
         self.merge_thread.finished_signal.connect(lambda: self.on_merge_finished(out_file))
+        self.merge_thread.error_signal.connect(self.on_merge_error)
         self.merge_thread.start()
 
     def on_merge_finished(self, out_file):
-        self.loading.stop(),
+        self.loading.stop()
         self.loading.deleteLater()
         arr = list_groups_linked_to_layer(self.main.project.layerTreeRoot(), self.main.layer)
         tree = arr[::-1][1:]
@@ -119,19 +141,35 @@ class Merge(QObject):
         self.deleteLater()
         self.main.back_animation_signal.emit()
 
+    def on_merge_error(self, msg):
+        self.loading.stop()
+        self.loading.deleteLater()
+        iface.messageBar().pushMessage(
+            self.tr("Erro ao unir camadas"), msg, level=Qgis.Critical, duration=5
+        )
+
     def deleteLater(self) -> None:
         print(f'{self.__class__} Deleted')
-        self.main.stackedWidget.setCurrentIndex(0),
-        self.main.stackedWidget_column.setCurrentIndex(0),
-        self.main.back_button_show_signal.emit(),
-        self.main.listWidget_chose.clear(),
-        self.main.listWidget_layer1_flds.clear(),
-        self.main.listWidget_layer2_flds.clear(),
+        self.main.stackedWidget.setCurrentIndex(0)
+        self.main.stackedWidget_column.setCurrentIndex(0)
+        self.main.back_button_show_signal.emit()
+        self.main.listWidget_chose.clear()
+        self.main.listWidget_layer1_flds.clear()
+        self.main.listWidget_layer2_flds.clear()
         self.main.label_title.setText(self.tr("Escolha um mapa para unir"))
-        self.main.pushButton_return.clicked.disconnect()
-        self.main.findPath_join.clicked.disconnect()
-        self.main.listWidget_chose.disconnect()
-        self.main.join_button.disconnect()
+        for btn, sig in (
+            (self.main.pushButton_return, 'clicked'),
+            (self.main.findPath_join, 'clicked'),
+            (self.main.join_button, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        try:
+            self.main.listWidget_chose.itemClicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
         super().deleteLater()
 
     def open_path(self):
@@ -165,6 +203,9 @@ class Merge(QObject):
         self.main.label_title.setText(self.tr("Selecione a(s) coluna(s) que deseja unir"))
 
         self.layer_to_uni = widget.layer
+
+        self.main.listWidget_layer1_flds.clear()
+        self.main.listWidget_layer2_flds.clear()
 
         flds1 = [f for f in self.main.layer.fields()]
         names1 = [f.name() for f in flds1]
@@ -209,7 +250,7 @@ class Merge(QObject):
                               range(self.main.listWidget_layer2_flds.count())]
             parent_list = self.main.listWidget_layer2_flds
 
-        if parent_list == None:
+        if parent_list is None:
             print_log(self, self.on_combobox_status_changed, parent_list)
             return
 

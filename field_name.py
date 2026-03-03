@@ -23,7 +23,7 @@ class FieldName(QWidget, FORM_CLASS):
     def on_go_clicked(self):
         # Check Name Field
         if self.lineEdit.text() == "":
-            iface.messageBar().pushMessage("Digine o nome do campo", level=Qgis.MessageLevel.Info,
+            iface.messageBar().pushMessage("Digite o nome do campo", level=Qgis.MessageLevel.Info,
                                            duration=5)
             return
         self.hide()

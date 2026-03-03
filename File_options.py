@@ -1,3 +1,4 @@
+import csv
 import os
 import subprocess
 import sys
@@ -6,7 +7,7 @@ from pathlib import Path
 
 import utm
 from PIL import Image
-from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize
+from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize, QTimer
 from qgis.PyQt.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon
 from qgis.PyQt.QtWidgets import QFileDialog, QPushButton
 from qgis.PyQt import QtWidgets
@@ -15,7 +16,8 @@ from qgis._core import Qgis, QgsLayerTreeGroup, QgsField, QgsVectorFileWriter, Q
     QgsLayoutItemMap, \
     QgsLayoutPoint, QgsUnitTypes, QgsLayoutSize, QgsLayoutItemLabel, \
     QgsLayoutItemPolygon, QgsFillSymbol, QgsLayoutItemPage, QgsMapSettings, QgsRectangle, QgsLayoutItemPicture, \
-    QgsLayoutExporter, QgsLayoutItemMapGrid, QgsLayoutItemScaleBar, QgsScaleBarSettings, QgsTextFormat
+    QgsLayoutExporter, QgsLayoutItemMapGrid, QgsLayoutItemScaleBar, QgsScaleBarSettings, QgsTextFormat, \
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
 
 from .FileFunctions.create_field import CreateField
 from .FileFunctions.adjust_average import AdjustAverage
@@ -45,108 +47,68 @@ class CSVThread(QThread):
         self.dir = dir
 
     def run(self) -> None:
-        '''
-        Thread responsável por executar a função de adicionar as colunas de coordenadas x, y
-        e salvar o .csv unindo com as informações originais
-
-        '''
         layer = self.layer
 
         if not layer.isValid():
-            print_log(self, self.run, layer, msg="Falia ao carregar a layer")
+            print_log(self, self.run, msg="Falha ao carregar a layer")
+            self.on_finished.emit()
+            return
 
-        feats = [feat for feat in layer.getFeatures()]
-        mem_layer = QgsVectorLayer("Polygon?crs=epsg:4326", "duplicated_layer", "memory")
-        mem_layer_data = mem_layer.dataProvider()
-        attr = layer.dataProvider().fields().toList()
-        mem_layer_data.addAttributes(attr)
-        mem_layer.updateFields()
-        mem_layer_data.addFeatures(feats)
-
-        layer_provider = mem_layer.dataProvider()
-
-        # adding new fields
-        for attr in ["X_Coord", "Y_Coord"]:
-            layer_provider.addAttributes([QgsField(attr, QVariant.Double)])
-        mem_layer.updateFields()
-
-        # starting layer editing
-        mem_layer.startEditing()
-
-        for feature in mem_layer.getFeatures():
-            for geom in feature.geometry().asGeometryCollection():
-                polygon = geom.asPolygon()
-                for po in polygon:
-                    for point in po:
-                        fields = mem_layer.fields()  # accessing layer fields
-                        attrs = {
-                            fields.indexFromName("X_Coord"): point.x(),
-                            fields.indexFromName("Y_Coord"): point.y()
-                        }
-                        layer_provider.changeAttributeValues({feature.id(): attrs})
-
-        mem_layer.commitChanges()
-
+        field_names = [field.name() for field in layer.fields()]
         csv_name = layer.name().split('.')[0]
+        out_path = os.path.join(self.dir, csv_name + '(coordenadas).csv')
 
-        QgsVectorFileWriter.writeAsVectorFormat(mem_layer,
-                                                self.dir + '/' + csv_name + '(coordenadas)' + '.csv',
-                                                "utf-8", driverName="CSV", layerOptions=['GEOMETRY=AS_XYZ'])
+        with open(out_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(field_names + ['X_Coord', 'Y_Coord'])
+            for feature in layer.getFeatures():
+                centroid = feature.geometry().centroid().asPoint()
+                writer.writerow(
+                    [feature[name] for name in field_names] +
+                    [round(centroid.x(), 8), round(centroid.y(), 8)]
+                )
 
         print_log(self, self.run, msg="Concluído!")
         self.on_finished.emit()
 
 
-class CSVUTM(QThread):
+class SaveThreadUTM(QThread):
     on_finished = pyqtSignal()
 
-    def __init__(self, layer, dir, parent=None):
-        super(CSVUTM, self).__init__()
+    def __init__(self, path, layer):
+        super(SaveThreadUTM, self).__init__()
+        self.path = path
         self.layer = layer
-        self.dir = dir
 
     def run(self) -> None:
         layer = self.layer
         if not layer.isValid():
-            print_log(self, self.run, layer, msg="Falia ao carregar a layer")
+            print_log(self, self.run, msg="Falha ao carregar a layer")
+            self.on_finished.emit()
+            return
 
-        feats = [feat for feat in layer.getFeatures()]
-        mem_layer = QgsVectorLayer("Polygon?crs=epsg:4326", f"{self.layer.name()}_duplicated_layer", "memory")
-        mem_layer_data = mem_layer.dataProvider()
-        attr = layer.dataProvider().fields().toList()
-        mem_layer_data.addAttributes(attr)
-        mem_layer.updateFields()
-        mem_layer_data.addFeatures(feats)
+        # Detect UTM zone from layer centroid
+        extent = layer.extent()
+        center_x = (extent.xMinimum() + extent.xMaximum()) / 2
+        center_y = (extent.yMinimum() + extent.yMaximum()) / 2
+        _, _, zone_number, zone_letter = utm.from_latlon(center_y, center_x)
+        hemisphere = 6 if zone_letter >= 'N' else 7
+        epsg_utm = int(f"32{hemisphere}{zone_number:02d}")
 
-        layer_provider = mem_layer.dataProvider()
+        dest_crs = QgsCoordinateReferenceSystem(f"EPSG:{epsg_utm}")
 
-        # adding new fields
-        for attr in ["X_Coord_UTM", "Y_Coord_UTM"]:
-            layer_provider.addAttributes([QgsField(attr, QVariant.Double)])
-        mem_layer.updateFields()
+        name = layer.name().split('.')[0] + "(UTM)"
+        output_path = os.path.join(self.path, name + '.shp')
 
-        mem_layer.startEditing()
-
-        for feature in mem_layer.getFeatures():
-            for geom in feature.geometry().asGeometryCollection():
-                polygon = geom.asPolygon()
-                for po in polygon:
-                    for point in po:
-                        fields = mem_layer.fields()  # accessing layer fields
-                        utmcoords = utm.from_latlon(point.x(), point.y())
-                        attrs = {
-                            fields.indexFromName("X_Coord_UTM"): float('{0:.2f}'.format(utmcoords[0])),
-                            fields.indexFromName("Y_Coord_UTM"): float('{0:.2f}'.format(utmcoords[1]))
-                        }
-                        layer_provider.changeAttributeValues({feature.id(): attrs})
-
-        mem_layer.commitChanges()
-
-        csv_name = layer.name().split('.')[0]
-
-        QgsVectorFileWriter.writeAsVectorFormat(mem_layer,
-                                                self.dir + '/' + csv_name + '(coordenadasUTM)' + '.csv',
-                                                "utf-8", driverName="CSV", layerOptions=['GEOMETRY=AS_XYZ'])
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = "ESRI Shapefile"
+        options.fileEncoding = "UTF-8"
+        options.ct = QgsCoordinateTransform(
+            layer.crs(), dest_crs, layer.transformContext()
+        )
+        QgsVectorFileWriter.writeAsVectorFormatV3(
+            layer, output_path, layer.transformContext(), options
+        )
 
         print_log(self, self.run, msg="Concluído!")
         self.on_finished.emit()
@@ -155,45 +117,50 @@ class CSVUTM(QThread):
 class PrintPDF(QThread):
     on_finished = pyqtSignal(object)
 
-    def __init__(self, layer, project, image_path, option_image_path=None, parent=None):
+    def __init__(self, layer, project, image_path, option_image_path=None, unit='kg/ha', parent=None):
         super(PrintPDF, self).__init__()
         self.layer = layer
         self.project = project
         self.image_path = image_path
         self.option_image_path = option_image_path
+        self.unit = unit
 
-    def addLegend(self, layout, map_y):
+    def addLegend(self, layout, map_y, page_height):
 
         x = 10
-        y = 10
         w = 20
-        h = 20
-
-        aux = y
         space_bet_map_legend = 20
+
+        available_height = page_height - 15 - map_y - space_bet_map_legend
 
         rend = self.layer.renderer()
         first_rect = None
         count = len(rend.legendSymbolItems())
         if count > 2:
-            for count, lsi in enumerate(rend.legendSymbolItems()):
+            step = min(10.0, available_height / count)
+            aux = 0.0
+
+            for i, lsi in enumerate(rend.legendSymbolItems()):
 
                 color = lsi.symbol().color().name()
                 name = lsi.label()
 
+                item_y = map_y + space_bet_map_legend + aux
+                box_h = step * 0.8
+
                 polygon = QPolygonF()
-                polygon.append(QPointF(x, y))
-                polygon.append(QPointF(w, y))
-                polygon.append(QPointF(w, h))
-                polygon.append(QPointF(x, h))
+                polygon.append(QPointF(x, 0))
+                polygon.append(QPointF(w, 0))
+                polygon.append(QPointF(w, box_h))
+                polygon.append(QPointF(x, box_h))
 
                 polygonItem = QgsLayoutItemPolygon(polygon, layout)
                 polygonItem.attemptMove(
-                    QgsLayoutPoint(8, map_y + space_bet_map_legend + aux - 10, QgsUnitTypes.LayoutMillimeters))
+                    QgsLayoutPoint(8, item_y, QgsUnitTypes.LayoutMillimeters))
 
                 layout.addLayoutItem(polygonItem)
 
-                if count == 0:
+                if i == 0:
                     first_rect = polygonItem
 
                 props = {}
@@ -210,18 +177,21 @@ class PrintPDF(QThread):
                 title = QgsLayoutItemLabel(layout)
                 title.setText(name)
                 _fmt = QgsTextFormat()
-                _fmt.setFont(QFont("Arial", 12, QFont.Bold))
-                _fmt.setSize(12)
+                font_size = max(6, min(12, int(step * 0.7)))
+                _fmt.setFont(QFont("Arial", font_size, QFont.Bold))
+                _fmt.setSize(font_size)
                 title.setTextFormat(_fmt)
-                title.setMinimumSize(QgsLayoutSize(100, 10))
-                title.adjustSizeToText()
+                title.setVAlign(Qt.AlignVCenter)
+                title.setFixedSize(QgsLayoutSize(100, box_h))
                 title.attemptMove(
-                    QgsLayoutPoint(8 + (w - x) + 2, map_y + space_bet_map_legend + aux - 10 + (((h - y) / 2) - 2),
+                    QgsLayoutPoint(8 + (w - x) + 2, item_y,
                                    QgsUnitTypes.LayoutMillimeters))
                 layout.addLayoutItem(title)
 
-                aux += 10
-        return first_rect, h - y, count
+                aux += step
+        else:
+            step = 10.0
+        return first_rect, step, count
 
     def run(self) -> None:
         layer_name = self.layer.name().split('.')[0]
@@ -262,12 +232,9 @@ class PrintPDF(QThread):
         map.grid().setAnnotationPosition(QgsLayoutItemMapGrid.OutsideMapFrame, QgsLayoutItemMapGrid.Left)
         map.grid().setAnnotationDirection(QgsLayoutItemMapGrid.Vertical, QgsLayoutItemMapGrid.Left)
         map.setRect(20, 20, 20, 20)
-        map_settings = QgsMapSettings()
-        map_settings.setLayers([self.layer])
-        rect = QgsRectangle(map_settings.fullExtent())
+        map.setLayers([self.layer])
+        rect = QgsRectangle(self.layer.extent())
         rect.scale(1.1)
-        map_settings.setExtent(rect)
-        # render = QgsMapRendererParallelJob(map_settings)
 
         map.zoomToExtent(rect)
         map.attemptMove(QgsLayoutPoint(5, 30, QgsUnitTypes.LayoutMillimeters))
@@ -281,11 +248,11 @@ class PrintPDF(QThread):
 
         tree = list_groups_linked_to_layer(self.project.layerTreeRoot(), self.layer)
 
-        first_r, node_h, count = self.addLegend(layout, map_height)
+        first_r, node_h, count = self.addLegend(layout, map_height, page_height)
 
-        name = tree[-2]
-        fild = tree[-3]
-        tal = tree[-4]
+        name = tree[-2] if len(tree) >= 2 else ''
+        fild = tree[-3] if len(tree) >= 3 else ''
+        tal  = tree[-4] if len(tree) >= 4 else ''
 
         title = QgsLayoutItemLabel(layout)
         title.setText(name)
@@ -358,6 +325,8 @@ class PrintPDF(QThread):
         layout.addLayoutItem(scale_bar)
 
         # crair moldura legenda
+        w = map.pos().x() + map.rect().width()
+        h = page_height - 5
         if first_r is not None:
             x = map.pos().x()
             y = first_r.pos().y()
@@ -365,6 +334,7 @@ class PrintPDF(QThread):
             w = map.pos().x() + map.rect().width()
             h = y + node_h * count
             h += 29
+            h = min(h, page_height - 5)
 
             polygon = QPolygonF()
             polygon.append(QPointF(x, y))
@@ -373,7 +343,7 @@ class PrintPDF(QThread):
             polygon.append(QPointF(x, h))
 
             polygonItem = QgsLayoutItemPolygon(polygon, layout)
-            # layout.addLayoutItem(polygonItem)
+            layout.addLayoutItem(polygonItem)
 
         symbol = QgsFillSymbol.createSimple(props)
         polygonItem.setSymbol(symbol)
@@ -415,7 +385,7 @@ class PrintPDF(QThread):
             layout.addLayoutItem(pic)
 
         title_uni = QgsLayoutItemLabel(layout)
-        title_uni.setText(self.tr('Unidade: kg/ha'))
+        title_uni.setText(self.tr('Unidade: ') + self.unit)
         _fmt = QgsTextFormat()
         _fmt.setFont(QFont("Arial", 8))
         _fmt.setSize(8)
@@ -438,19 +408,19 @@ class SaveThread(QThread):
     def run(self):
         name = self.layer.name() + "(exported)"
         output_path = os.path.join(self.path, name + '.shp')
-        writer = QgsVectorFileWriter.writeAsVectorFormat(self.layer,
-                                                         output_path,
-                                                         "UTF-8",
-                                                         driverName="ESRI Shapefile"
-                                                         )
-
-        del writer
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = "ESRI Shapefile"
+        options.fileEncoding = "UTF-8"
+        QgsVectorFileWriter.writeAsVectorFormatV3(
+            self.layer, output_path, self.layer.transformContext(), options
+        )
         print_log(self, self.run, msg="Concluído!")
         self.on_finished.emit()
 
 
 class VRC(QThread):
     on_finished = pyqtSignal()
+    on_error = pyqtSignal(str)
 
     def __init__(self, layer_path, index, new_out_path):
         super(VRC, self).__init__()
@@ -461,25 +431,22 @@ class VRC(QThread):
     def run(self):
         si = subprocess.STARTUPINFO()
         si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        # FNULL = open(os.devnull, 'w')
         args = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ExternalFunctions",
                             "ExtFunctions.exe")
-        if os.path.isfile(args):
-            '''subprocess.call([args, 'convert_to_vrc', self.layer_path, str(self.index), self.new_out_path], stdout=FNULL,
-                            stderr=FNULL,
-                            shell=False,
-                            startupinfo=si)'''
-            p = subprocess.Popen([args, 'convert_to_vrc', self.layer_path, str(self.index), self.new_out_path],
-                                 stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE,
-                                 startupinfo=si)
-            output, err = p.communicate()
-            print(output, err)
-
-            print_log(self, self.run, msg="Concluído!")
-        else:
+        if not os.path.isfile(args):
             print_log(self, self.run, msg="Arquivo ExtFunctions.exe não encontrado!")
+            self.on_error.emit("ExtFunctions.exe não encontrado.")
+            return
+
+        p = subprocess.Popen([args, 'convert_to_vrc', self.layer_path, str(self.index), self.new_out_path],
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             startupinfo=si)
+        output, err = p.communicate()
+        if err:
+            print_log(self, self.run, msg=f"Erro VRC: {err.decode(errors='replace')}")
+        print_log(self, self.run, msg="Concluído!")
         self.on_finished.emit()
 
 
@@ -578,20 +545,61 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         InfoButton(self.messages.column_info(), self.pushButtonColumn)
         InfoButton(self.messages.create_field_info(), self.pushButtonCreateField)
 
-    @pyqtSlot(object)
-    def on_layer_update_feat(self, features):
-        start_time = time.time()
-        self.layer.dataProvider().changeAttributeValues(features)
-        self.layer.updateFields()
-        self.layer.commitChanges()
+    @pyqtSlot(object, object, object)
+    def on_layer_update_feat(self, features, callback, progress):
+        from qgis.utils import iface as _iface
+        canvas = _iface.mapCanvas()
 
-        for item in self.itens:
-            if item.filename == self.file_widget.filename:
-                self.file_widget.update_fields_list()
-                self.file_widget.update()
-                item.update_fields_list()
-                item.update()
-        print("--- %s seconds ---" % (time.time() - start_time))
+        items = list(features.items())
+        provider = self.layer.dataProvider()
+        chunk_size = 100
+        total = len(items)
+
+        # Extract field_index and preserve current class count before chunking
+        field_index = -1
+        for feat_id, attr_map in items:
+            for fi in attr_map:
+                field_index = fi
+            break
+        renderer = self.layer.renderer()
+        num_classes = len(renderer.ranges()) if hasattr(renderer, 'ranges') else 5
+
+        canvas.freeze(True)
+        idx = 0
+
+        def _finish():
+            canvas.freeze(False)
+            canvas.refresh()
+            if field_index >= 0:
+                upgrade_grid(self.layer, _iface, field_index, classes=num_classes, deferred=True)
+            for item in self.itens:
+                if item.filename == self.file_widget.filename:
+                    self.file_widget.update_fields_list()
+                    self.file_widget.update()
+                    item.update_fields_list()
+                    item.update()
+            if callable(callback):
+                callback()
+
+        def process_chunk():
+            nonlocal idx
+            chunk = dict(items[idx:idx + chunk_size])
+            if chunk:
+                provider.changeAttributeValues(chunk)
+            idx += chunk_size
+            if callable(progress) and total > 0:
+                progress(min(idx / total * 100, 100))
+            if idx < len(items):
+                QTimer.singleShot(0, process_chunk)
+            else:
+                _finish()
+
+        if items:
+            QTimer.singleShot(0, process_chunk)
+        else:
+            canvas.freeze(False)
+            if callable(callback):
+                callback()
 
     @pyqtSlot()
     def export_section(self):
@@ -629,9 +637,6 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                     field = names1[index]
 
                     layer_path = self.layer.dataProvider().dataSourceUri()
-                    layer_path_split = layer_path.split('/')
-
-                    layer_path = '/'.join(layer_path_split)
                     layer_name = self.layer_name + '(' + field + ')' + '.vrc'
 
                     self.loading_vrc = Loading(button)
@@ -644,11 +649,20 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                     self.vrc = VRC(layer_path, index, new_out_path)
 
                     if os.path.exists(path_to_save):
-                        self.vrc.on_finished.connect(lambda: (
-                            self.start_file(path_to_save)),
-                                                     self.loading_vrc.stop(),
-                                                     self.loading_vrc.hide()
-                                                     )
+                        def on_vrc_finished():
+                            self.loading_vrc.stop()
+                            self.loading_vrc.hide()
+                            self.start_file(path_to_save)
+
+                        def on_vrc_error(msg):
+                            self.loading_vrc.stop()
+                            self.loading_vrc.hide()
+                            self.iface.messageBar().pushMessage(
+                                self.tr("Erro VRC"), msg, level=Qgis.Critical, duration=5
+                            )
+
+                        self.vrc.on_finished.connect(on_vrc_finished)
+                        self.vrc.on_error.connect(on_vrc_error)
                         self.vrc.start()
 
                 add_buttons_to_grid(self.gridLayout_13, self.layer, on_click)
@@ -668,6 +682,14 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                 self.pushButtonExportSHPUTM.clicked.disconnect()
 
         self.stackedWidget.setCurrentIndex(3)
+
+        for btn in (self.pushButtonExportSHP, self.pushButtonExportCsv,
+                    self.pushButtonExportSHPUTM, self.pushButtonExport_vrc,
+                    self.pushButton_return_export, self.findPath):
+            try:
+                btn.clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
 
         self.pushButtonExportSHP.clicked.connect(self.export_shp)
         self.pushButtonExportCsv.clicked.connect(self.export_csv)
@@ -716,8 +738,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot()
     def export_csv_utm(self) -> None:
         """
-        Gera .csv adicionando os dados
-        de coordenadas lat, long UTM
+        Exporta a camada como Shapefile reprojetado para UTM,
+        detectando automaticamente a zona UTM pelo centroide da camada.
         """
 
         path = self.currentPath.text()
@@ -726,7 +748,7 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
         self.loading_csv_utm.start()
         self.loading_csv_utm.show()
-        self.csv_utm = CSVUTM(self.layer, path)
+        self.csv_utm = SaveThreadUTM(path, self.layer)
         self.csv_utm.on_finished.connect(self.loading_csv_utm.stop)
         self.csv_utm.on_finished.connect(self.loading_csv_utm.hide)
         self.csv_utm.on_finished.connect(lambda: self.start_file(path))
@@ -817,7 +839,9 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
         @pyqtSlot(int, object)
         def on_click(idx, obj):
-            upgrade_grid(self.layer, self.iface, idx)
+            renderer = self.layer.renderer()
+            current_classes = len(renderer.ranges()) if hasattr(renderer, 'ranges') else 5
+            upgrade_grid(self.layer, self.iface, idx, classes=current_classes)
 
             @pyqtSlot()
             def on_print_clicked():
@@ -837,7 +861,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                 self.print_thread = PrintPDF(self.layer,
                                              self.project,
                                              default_image_name,
-                                             option_image_name)
+                                             option_image_name,
+                                             self.comboBox_unit.currentText())
                 self.print_thread.on_finished.connect(self.open_pdf)
                 self.print_thread.on_finished.connect(lambda: (self.loading_pdf.stop(),
                                                                self.loading_pdf.hide(),
@@ -845,15 +870,25 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                 self.print_thread.start()
 
             self.stackedWidget_3.setCurrentIndex(1)
+            try:
+                self.pushButtonImage.clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                self.printPDF_button.clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
             self.pushButtonImage.clicked.connect(on_button_image_clicked)
             self.printPDF_button.clicked.connect(on_print_clicked)
 
         self.stackedWidget.setCurrentIndex(4)
 
-        self.pushButton_return_pdf.disconnect()
-        self.pushButtonImage.disconnect()
-        self.printPDF_button.disconnect()
-        self.findPath_pdf.disconnect()
+        for btn in (self.pushButton_return_pdf, self.pushButtonImage,
+                    self.printPDF_button, self.findPath_pdf):
+            try:
+                btn.disconnect()
+            except (RuntimeError, TypeError):
+                pass
         self.widget.paintEvent = None
 
         self.pushButton_return_pdf.clicked.connect(
@@ -894,6 +929,11 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
         exporter = QgsLayoutExporter(layout)
         result = exporter.exportToPdf(path, QgsLayoutExporter.PdfExportSettings())
+        if result != QgsLayoutExporter.Success:
+            self.iface.messageBar().pushMessage(
+                self.tr("Erro"), self.tr("Falha ao exportar PDF."),
+                level=Qgis.Critical, duration=5
+            )
         self.start_file(path)
 
         manager = self.project.layoutManager()

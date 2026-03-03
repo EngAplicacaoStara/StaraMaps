@@ -2,9 +2,10 @@ import os
 
 from .map_canvas_refactor import MapCanvasRefactor
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis._core import QgsVectorLayer, QgsFeature, QgsVectorFileWriter, QgsProject
+from qgis.PyQt.QtCore import QVariant
+from qgis._core import QgsVectorLayer, QgsFeature, QgsVectorFileWriter, QgsProject, QgsField
 
-from field_name import FieldName
+from ..field_name import FieldName
 
 
 class CreateFieldMapCanvas(MapCanvasRefactor):
@@ -42,9 +43,12 @@ class CreateFieldMapCanvas(MapCanvasRefactor):
         self.dock.setFloating(False)
         vl = QgsVectorLayer("Polygon?crs=epsg:4326", self.layer.id() + 'temporary', "memory")
         pr = vl.dataProvider()
+        pr.addAttributes([QgsField("nome", QVariant.String)])
+        vl.updateFields()
         vl.startEditing()
-        fet = QgsFeature()
+        fet = QgsFeature(vl.fields())
         fet.setGeometry(geo)
+        fet.setAttribute("nome", name)
         pr.addFeatures([fet])
         vl.commitChanges()
         self.feat_geo_signal.emit(vl, name)

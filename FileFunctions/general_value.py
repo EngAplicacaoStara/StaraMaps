@@ -10,43 +10,52 @@ class GeneralValue(QObject):
         self.main = main
         self.selected_list = []
         self.unselected_list = []
+        self._gen_window = None
         self.init()
 
     def init(self) -> None:
+        try:
+            self.main.pushButton_return_gen_value.clicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
         self.main.pushButton_return_gen_value.clicked.connect(lambda: self.deleteLater())
         self.main.back_button_hide_signal.emit()
         self.main.stackedWidget.setCurrentIndex(9)
-
         add_buttons_to_grid(self.main.gridLayout_17, self.main.layer, self.on_click)
+
+    def _current_classes(self):
+        renderer = self.main.layer.renderer()
+        return len(renderer.ranges()) if hasattr(renderer, 'ranges') else 5
 
     @pyqtSlot(int, object)
     def on_click(self, index, obj):
-        upgrade_grid(self.main.layer, self.main.iface, index)
+        if self._gen_window is not None:
+            try:
+                self._gen_window.deleteLater()
+            except RuntimeError:
+                pass
+            self._gen_window = None
+
+        upgrade_grid(self.main.layer, self.main.iface, index, classes=self._current_classes())
 
         features = self.main.layer.getFeatures()
 
-        mean_window = GeneralValues(
+        self._gen_window = GeneralValues(
             obj.text(),
             features,
             index,
             self.main.pushButton_return_gen_value,
             self.main.page_23
         )
-        mean_window.update_features_signal.connect(self.main.on_layer_update_feat)
-        mean_window.finish_signal.connect(lambda:
-                                          (
-                                              upgrade_grid(self.main.layer, self.main.iface, index),
-                                              mean_window.deleteLater()
-                                          )
-                                          )
-        mean_window.close_signal.connect(lambda: (
-            mean_window.deleteLater()
-        ))
-        mean_window.show()
+        self._gen_window.update_features_signal.connect(self.main.on_layer_update_feat)
+        self._gen_window.close_signal.connect(lambda: self._gen_window.deleteLater())
+        self._gen_window.show()
 
     def deleteLater(self) -> None:
-        print(f'{self.__class__} Deleted')
         self.main.stackedWidget.setCurrentIndex(0)
         self.main.back_button_show_signal.emit()
-        self.main.pushButton_return_gen_value.disconnect()
+        try:
+            self.main.pushButton_return_gen_value.clicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
         super().deleteLater()

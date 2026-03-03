@@ -5,13 +5,19 @@ from qgis.PyQt.QtCore import QObject, pyqtSlot
 from qgis.PyQt.QtWidgets import QPushButton, QFileDialog
 from qgis._analysis import QgsInterpolator, QgsIDWInterpolator, QgsGridFileWriter
 from qgis._core import QgsVectorLayer, QgsApplication, QgsTask, QgsWkbTypes, QgsProcessingFeatureSourceDefinition, \
-    QgsFeatureRequest, QgsVectorFileWriter, QgsCoordinateTransformContext
+    QgsFeatureRequest, QgsVectorFileWriter, QgsCoordinateTransformContext, Qgis
+from qgis.core import NULL
+from qgis.PyQt.QtCore import QVariant
 
 from ..canvas.interpolate_map_canvas import InterpolateMapCanvas
 from ..loading import Loading
 
 from ..qgisFuncs import upgrade_grid, MyFeedBack, remove_file, list_groups_linked_to_layer, add_buttons_to_grid, \
     same_file
+
+
+NUMERIC_TYPES = (QVariant.Int, QVariant.LongLong, QVariant.Double,
+                 QVariant.UInt, QVariant.ULongLong)
 
 
 class Interpolate(QObject):
@@ -21,7 +27,51 @@ class Interpolate(QObject):
         self.index = 0
         self.manual_layer_contour = None
         self.button_created = False
+
+        valid, msg = self._validate(main.layer)
+        if not valid:
+            main.iface.messageBar().pushMessage(
+                self.tr("Interpolar"), msg, level=Qgis.Warning, duration=5
+            )
+            self.deleteLater()
+            return
+
         self.init()
+
+    def _validate(self, layer):
+        # Bloquear geometria de linha
+        if layer.geometryType() == QgsWkbTypes.LineGeometry:
+            return False, self.tr(
+                "Interpolação não disponível para camadas de linhas. "
+                "Use camadas de pontos ou polígonos com valores numéricos."
+            )
+
+        # Verificar se existe ao menos um campo numérico
+        numeric_fields = [
+            f for f in layer.fields()
+            if f.type() in NUMERIC_TYPES
+        ]
+        if not numeric_fields:
+            return False, self.tr(
+                "A camada não possui campos numéricos para interpolar."
+            )
+
+        # Verificar se os campos numéricos têm algum valor não-nulo
+        has_data = False
+        for field in numeric_fields:
+            for feat in layer.getFeatures():
+                if feat[field.name()] is not None and feat[field.name()] != NULL:
+                    has_data = True
+                    break
+            if has_data:
+                break
+
+        if not has_data:
+            return False, self.tr(
+                "Todos os campos numéricos da camada estão vazios."
+            )
+
+        return True, ''
 
     def init(self) -> None:
         self.main.stackedWidget.setCurrentIndex(6)
@@ -35,7 +85,7 @@ class Interpolate(QObject):
 
         self.task_mgr = QgsApplication.taskManager()
         self.feed = MyFeedBack()
-        self.feed.progressChanged.connect(self.main.progressBar_interpolate.setValue)
+        self.feed.progressChanged.connect(lambda v: self.main.progressBar_interpolate.setValue(int(v)))
 
         layer_path = self.main.layer.dataProvider().dataSourceUri()
         layer_path_split = layer_path.split('/')
@@ -66,21 +116,24 @@ class Interpolate(QObject):
 
             self.set_manual_contour(vl)
 
-            self.set_manual_contour(vl)
-
     def deleteLater(self) -> None:
         print(f'{self.__class__} Deleted')
-        self.main.stackedWidget.setCurrentIndex(0),
+        self.main.stackedWidget.setCurrentIndex(0)
         self.main.label_interpolate.setText(self.tr('Selecione uma Coluna'))
         self.main.stackedWidget_interpolate.setCurrentIndex(0)
-        self.canvas.points.deleteLater()
-        self.canvas.dock.deleteLater()
-        self.canvas.deleteLater()
+        if hasattr(self, 'canvas'):
+            self.canvas.points.deleteLater()
+            self.canvas.dock.deleteLater()
+            self.canvas.deleteLater()
         self.main.back_button_show_signal.emit()
-        self.main.pushButton_return_interpolate.disconnect()
-        self.main.pushButtonManualInterpolate.disconnect()
-        self.main.InterpolatePushButton.disconnect()
-        self.main.pushButtonLoad.disconnect()
+        for btn in (self.main.pushButton_return_interpolate,
+                    self.main.pushButtonManualInterpolate,
+                    self.main.InterpolatePushButton,
+                    self.main.pushButtonLoad):
+            try:
+                btn.clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
         super().deleteLater()
 
     @pyqtSlot(QgsVectorLayer)
@@ -104,8 +157,8 @@ class Interpolate(QObject):
             options.fileEncoding = 'utf-8'
             # options.datasourceOptions = ["NameField=ulica"]
 
-            QgsVectorFileWriter.writeAsVectorFormatV2(layer=vec, fileName=output_layer,
-                                                      transformContext=QgsCoordinateTransformContext(), options=options)
+            QgsVectorFileWriter.writeAsVectorFormatV3(vec, output_layer,
+                                                      QgsCoordinateTransformContext(), options)
 
             self.main.stackedWidget_interpolate.setCurrentIndex(1)
 
@@ -135,6 +188,14 @@ class Interpolate(QObject):
         upgrade_grid(self.main.layer, self.main.iface, index)
         self.main.stackedWidget_interpolate.setCurrentIndex(1)
         self.main.label_interpolate.setText(self.tr('Interpolar coluna ') + obj.text())
+
+        for btn in (self.main.pushButtonManualInterpolate,
+                    self.main.pushButtonLoad,
+                    self.main.InterpolatePushButton):
+            try:
+                btn.clicked.disconnect()
+            except (RuntimeError, TypeError):
+                pass
 
         self.main.pushButtonManualInterpolate.clicked.connect(lambda: (
             self.main.stackedWidget_interpolate.setCurrentIndex(2),
@@ -168,7 +229,7 @@ class Interpolate(QObject):
         self.pixel = self.main.pixelSizeLineEdit.text()
         self.main.progressBar_interpolate.show()
         self.main.label_interpolate_info.show()
-        if self.coe_text == '' and self.pixel == '':
+        if self.coe_text == '' or self.pixel == '':
             return
 
         self.loading_interpolate = Loading(self.main.InterpolatePushButton)
@@ -239,7 +300,7 @@ class Interpolate(QObject):
         export_path = self.new_path_tif_mask
 
         rect = contour.extent()
-        res = int(self.pixel) / 100000  # Converter Sander, valor em metros
+        res = float(self.pixel) / 100000  # Converter Sander, valor em metros
         ncols = int((rect.xMaximum() - rect.xMinimum()) / res)
         nrows = int((rect.yMaximum() - rect.yMinimum()) / res)
         output = QgsGridFileWriter(idw_interpolator, export_path, rect, ncols, nrows)
@@ -264,8 +325,8 @@ class Interpolate(QObject):
         new = processing.run("gdal:cliprasterbymasklayer", params, feedback=self.feed).get('OUTPUT', None)
         return new
 
-    def on_final_clip_finished(self, exeption, value=None):
-        if exeption is None:
+    def on_final_clip_finished(self, exception, value=None):
+        if exception is None:
             self.main.label_interpolate_info.setText(self.tr('Recorte terminou'))
             task = QgsTask.fromFunction('my task 5', self.r_to_vec, value)
             task.taskCompleted.connect(self.on_r_to_vect_finished)

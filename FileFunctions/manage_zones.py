@@ -1,14 +1,8 @@
-import os
-import re
-import time
-
 from qgis.PyQt.QtCore import QObject, QSize, pyqtSlot
 from qgis.PyQt.QtWidgets import QListWidgetItem
-from qgis._core import QgsVectorFileWriter
 
 from ..loading import Loading
-from ..qgisFuncs import add_buttons_to_grid, upgrade_grid, ChangeBetweenValues, get_layer_copy, \
-    list_groups_linked_to_layer, same_file
+from ..qgisFuncs import add_buttons_to_grid, upgrade_grid, ChangeBetweenValues
 from ..range_widget import RangeWidget
 
 
@@ -20,6 +14,19 @@ class ManageZones(QObject):
         self.init()
 
     def init(self) -> None:
+        for btn, sig in (
+            (self.main.pushButton_return_manejo, 'clicked'),
+            (self.main.addPushButton, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        try:
+            self.main.spinBox.valueChanged.disconnect()
+        except (RuntimeError, TypeError):
+            pass
+
         self.main.pushButton_return_manejo.clicked.connect(lambda: self.deleteLater())
         self.main.addPushButton.clicked.connect(self.on_button_clicked)
         self.main.spinBox.valueChanged.connect(self.update_classes)
@@ -82,6 +89,9 @@ class ManageZones(QObject):
                 values_1.append(widget.lower_value)
                 values_2.append(widget.upper_value)
 
+        if not new_value:
+            return
+
         self.loading_manage = Loading(self.main.addPushButton)
         self.loading_manage.start()
         self.loading_manage.show()
@@ -105,39 +115,6 @@ class ManageZones(QObject):
 
         self.change_values.start()
 
-    def create_new_layer(self, feat) -> None:
-        start_time = time.time()
-        print(feat)
-        path = re.split("/ //", self.main.layer.dataProvider().dataSourceUri())
-        if len(path) == 1:
-            path = path[0].split('\\')
-        if len(path) == 1:
-            path = path[0].split('/')
-
-        path.pop(-1)
-        only_path = '\\'.join(path)
-
-        new_layer = get_layer_copy(self.main.layer)
-        new_layer.dataProvider().changeAttributeValues(feat)
-        new_layer.updateFields()
-        new_layer.commitChanges()
-
-        output_path = os.path.join(only_path, f'{self.main.layer.name()}_manageZ' + '.shp')
-
-        output_path = same_file(output_path)
-        print(output_path)
-        QgsVectorFileWriter.writeAsVectorFormat(new_layer,
-                                                output_path,
-                                                "UTF-8",
-                                                driverName="ESRI Shapefile"
-                                                )
-
-        arr = list_groups_linked_to_layer(self.main.project.layerTreeRoot(), self.main.layer)
-        tree = arr[::-1][1:]
-        self.main.merged_layer_signal.emit(output_path, tree)
-
-        print("--- %s seconds ---" % (time.time() - start_time))
-
     @pyqtSlot()
     def on_update(self):
 
@@ -159,7 +136,18 @@ class ManageZones(QObject):
         self.main.stackedWidget_manage.setCurrentIndex(0)
         self.main.listWidget.clear()
 
-        self.main.pushButton_return_manejo.disconnect()
-        self.main.back_button_show_signal.emit()
+        for btn, sig in (
+            (self.main.pushButton_return_manejo, 'clicked'),
+            (self.main.addPushButton, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        try:
+            self.main.spinBox.valueChanged.disconnect()
+        except (RuntimeError, TypeError):
+            pass
 
+        self.main.back_button_show_signal.emit()
         super().deleteLater()

@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from qgis.PyQt.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent
+from qgis.PyQt.QtCore import QThread, pyqtSignal, QSize, pyqtSlot, QPointF, Qt, QObject, QEvent, QTimer
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QPushButton, QWidget, QHBoxLayout, QLabel, QApplication, QCheckBox, QComboBox
 from qgis._core import QgsLayerTree, QgsVectorLayer, QgsStyle, QgsGraduatedSymbolRenderer, QgsVectorFileWriter, \
@@ -110,22 +110,21 @@ def try_delete_object(obj, method):
         print_log(obj, method, None, e)
 
 
-def upgrade_grid(layer, iface, index=0, classes=5):
-    flds = [f for f in layer.fields()]
-    names = [f.name() for f in flds]
+def upgrade_grid(layer, iface, index=0, classes=5, deferred=False):
+    if deferred:
+        QTimer.singleShot(10, lambda: upgrade_grid(layer, iface, index, classes, deferred=False))
+        return
 
+    names = [f.name() for f in layer.fields()]
     ramp_name = 'Spectral'
-    num_classes = classes
     default_style = QgsStyle().defaultStyle()
     color_ramp = default_style.colorRamp(ramp_name)
     renderer = layer.renderer()
 
     if isinstance(renderer, QgsGraduatedSymbolRenderer):
         renderer.setClassAttribute(names[index])
-
-        renderer.updateClasses(layer, num_classes)
+        renderer.updateClasses(layer, classes)
         renderer.updateColorRamp(color_ramp)
-
         iface.layerTreeView().refreshLayerSymbology(layer.id())
         layer.triggerRepaint()
 

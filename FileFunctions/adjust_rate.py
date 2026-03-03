@@ -16,6 +16,10 @@ class Rate(QObject):
         self.init()
 
     def init(self) -> None:
+        try:
+            self.main.pushButton_return_taxas.clicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
         self.main.pushButton_return_taxas.clicked.connect(lambda: self.deleteLater())
         self.main.back_button_hide_signal.emit()
         self.main.stackedWidget.setCurrentIndex(2)
@@ -58,11 +62,7 @@ class Rate(QObject):
                                      self.main.pushButton_return_taxas,
                                      self.main.frame_7)
         self.v_window.update_features_signal.connect(self.main.on_layer_update_feat)
-        self.v_window.finish_signal.connect(lambda: (
-            self.rate_canvas.show(),
-            upgrade_grid(self.main.layer, self.main.iface, self.index),
-            self.v_window.deleteLater()
-        ))
+        self.v_window.finish_signal.connect(lambda: self.rate_canvas.show())
         self.v_window.close_signal.connect(lambda: (
             self.rate_canvas.show(),
             self.v_window.deleteLater()
@@ -76,11 +76,7 @@ class Rate(QObject):
                                       self.main.pushButton_return_taxas,
                                       self.main.frame_7)
         self.v_window.update_features_signal.connect(self.main.on_layer_update_feat)
-        self.v_window.finish_signal.connect(lambda: (
-            self.rate_canvas.show(),
-            upgrade_grid(self.main.layer, self.main.iface, self.index),
-            self.v_window.deleteLater()
-        ))
+        self.v_window.finish_signal.connect(lambda: self.rate_canvas.show())
         self.v_window.close_signal.connect(lambda: (
             self.rate_canvas.show(),
             self.v_window.deleteLater()
@@ -94,11 +90,7 @@ class Rate(QObject):
                                       self.main.pushButton_return_taxas,
                                       self.main.frame_7)
         self.v_window.update_features_signal.connect(self.main.on_layer_update_feat)
-        self.v_window.finish_signal.connect(lambda: (
-            self.rate_canvas.show(),
-            upgrade_grid(self.main.layer, self.main.iface, self.index),
-            self.v_window.deleteLater()
-        ))
+        self.v_window.finish_signal.connect(lambda: self.rate_canvas.show())
         self.v_window.close_signal.connect(lambda: (
             self.rate_canvas.show(),
             self.v_window.deleteLater()
@@ -112,11 +104,7 @@ class Rate(QObject):
                                       self.main.pushButton_return_taxas,
                                       self.main.frame_7)
         self.v_window.update_features_signal.connect(self.main.on_layer_update_feat)
-        self.v_window.finish_signal.connect(lambda: (
-            self.rate_canvas.show(),
-            upgrade_grid(self.main.layer, self.main.iface, self.index),
-            self.v_window.deleteLater()
-        ))
+        self.v_window.finish_signal.connect(lambda: self.rate_canvas.show())
         self.v_window.close_signal.connect(lambda: (
             self.rate_canvas.show(),
             self.v_window.deleteLater()

@@ -1,10 +1,10 @@
 import os
 
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QObject, pyqtSlot
+from qgis._core import QgsVectorFileWriter, QgsVectorLayer, Qgis
+from qgis.utils import iface
 
 from ..canvas.create_field_map_canvas import CreateFieldMapCanvas
-from qgis.PyQt.QtCore import pyqtSlot
-from qgis._core import QgsVectorFileWriter, QgsVectorLayer
 
 
 class CreateField(QObject):
@@ -13,12 +13,15 @@ class CreateField(QObject):
         self.main = main
         self.index = 0
         self.canvas = CreateFieldMapCanvas(self.main)
-        print(self.main.layer.source())
         self.init()
 
     def init(self) -> None:
         self.main.stackedWidget.setCurrentIndex(10)
         self.main.back_button_hide_signal.emit()
+        try:
+            self.main.pushButton_return_create_field.clicked.disconnect()
+        except (RuntimeError, TypeError):
+            pass
         self.main.pushButton_return_create_field.clicked.connect(lambda: self.deleteLater())
         self.canvas.resize(self.main.page_26.size())
         self.canvas.feat_geo_signal.connect(self.save_new_layer)
@@ -29,13 +32,16 @@ class CreateField(QObject):
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = "ESRI Shapefile"
         options.fileEncoding = "UTF-8"
-        error = QgsVectorFileWriter.writeAsVectorFormatV3(
-            layer,
-            os.path.dirname(self.main.layer.source()) + f"/{name}.shp",
-            layer.transformContext(),
-            options
+        out_path = os.path.join(os.path.dirname(self.main.layer.source()), f"{name}.shp")
+        error, msg, *_ = QgsVectorFileWriter.writeAsVectorFormatV3(
+            layer, out_path, layer.transformContext(), options
         )
-        self.main.main.check_file_extension(os.path.dirname(self.main.layer.source()) + f"/{name}.shp")
+        if error != QgsVectorFileWriter.NoError:
+            iface.messageBar().pushMessage(
+                self.tr("Erro ao salvar bordadura"), msg, level=Qgis.Critical, duration=5
+            )
+            return
+        self.main.main.check_file_extension(out_path)
         self.deleteLater()
 
     def deleteLater(self) -> None:

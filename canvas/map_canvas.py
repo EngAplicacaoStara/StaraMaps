@@ -9,7 +9,7 @@ from qgis._core import QgsRasterLayer, QgsVectorLayer, QgsFeature
 from qgis._gui import QgsMapCanvas
 from qgis.PyQt import uic
 
-from qgisFuncs import PolyMapTool, InfoWithoutIcon, TextInfoTest
+from ..qgisFuncs import PolyMapTool, InfoWithoutIcon, TextInfoTest
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

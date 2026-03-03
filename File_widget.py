@@ -166,13 +166,12 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
         root.setCustomLayerOrder(order)
 
     def update_fields_list(self):
-
-        flds = [f for f in self.layer.fields()]
-        names = [f.name() for f in flds]
+        names = [f.name() for f in self.layer.fields()]
+        self.valueComboBox.blockSignals(True)
         self.valueComboBox.clear()
         for name in names:
             self.valueComboBox.addItem(name)
-
+        self.valueComboBox.blockSignals(False)
         self.value_field = names[0] if names else None
 
     def do_backup(self):

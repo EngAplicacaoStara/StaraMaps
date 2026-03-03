@@ -33,7 +33,7 @@ from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QFileDialog, QApplication, QGraphicsDropShadowEffect, QGraphicsOpacityEffect
 from qgis.PyQt import QtWidgets
 from qgis.PyQt import uic
-from qgis.core import QgsRasterLayer, QgsVectorLayer
+from qgis.core import Qgis, QgsRasterLayer, QgsVectorLayer
 from qgis.utils import iface
 
 from .File_widget import FileWidget
@@ -202,7 +202,10 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         else:
 
             if not self.iface.activeLayer():
-                self.iface.messageBar().pushWarning(self.tr("Aviso"), self.tr("Nenhuma Layer Selecionada."))
+                self.iface.messageBar().pushMessage(
+                    self.tr("Aviso"), self.tr("Nenhuma Layer Selecionada."),
+                    level=Qgis.Warning, duration=3
+                )
                 return
             self.project.addMapLayer(terrain_layer, False)
             self.iface.mapCanvas().setLayers(all_layers + [terrain_layer])

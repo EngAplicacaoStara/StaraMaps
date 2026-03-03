@@ -9,7 +9,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
 from qgis._gui import QgsMapCanvas
 from qgis._core import QgsRasterLayer, QgsCoordinateReferenceSystem
 
-from qgisFuncs import PolyMapTool
+from ..qgisFuncs import PolyMapTool
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -170,59 +170,6 @@ class MapCanvasRefactor(QWidget, FORM_CLASS):
             self.canvasInterpolate.scene().removeItem(g_p)
             self.points.showPoly()
             self.check_points()
-
-    @pyqtSlot()
-    def __check_dock_without_change(self) -> None:
-        if self.dock.isFloating():
-            self.MaximizePushButtonCanvasIn.setStyleSheet('''
-                                               QPushButton{
-                                                   background-color: rgb(243, 116, 53);
-                                                   border: none;	
-                                                   color: rgb(250, 250, 250);
-                                                   border-radius: 5px;
-                                                   font: 12pt url(:/plugins/StaraMaps/Roboto-Regular.ttf);
-                                                   image: url(:/plugins/StaraMaps/minimizar.png);
-                                                   padding-left: 2px;
-                                                   padding-right: 2px;
-                                                   padding-top: 2px; 
-                                                   padding-bottom: 2px;
-                                               }
-
-                                               QPushButton::hover{
-                                                   background-color: rgb(233, 106, 43);
-                                               }
-
-                                               QPushButton::pressed{
-                                                   background-color: rgb(223, 96, 33);
-                                               }
-                                           ''')
-            self.button_resize_signal.emit(40)
-            self.dock.showMaximized()
-
-        else:
-            self.MaximizePushButtonCanvasIn.setStyleSheet('''
-                                                               QPushButton{
-                                                                   background-color: rgb(243, 116, 53);
-                                                                   border: none;	
-                                                                   color: rgb(250, 250, 250);
-                                                                   border-radius: 5px;
-                                                                   font: 12pt url(:/plugins/StaraMaps/Roboto-Regular.ttf);
-                                                                   image: url(:/plugins/StaraMaps/maximizar.png);
-                                                                   padding-left: 2px;
-                                                                   padding-right: 2px;
-                                                                   padding-top: 2px; 
-                                                                   padding-bottom: 2px;
-                                                               }
-
-                                                               QPushButton::hover{
-                                                                   background-color: rgb(233, 106, 43);
-                                                               }
-
-                                                               QPushButton::pressed{
-                                                                   background-color: rgb(223, 96, 33);
-                                                               }
-                                                           ''')
-            self.button_resize_signal.emit(20)
 
     @pyqtSlot(int)
     def change_size_buttons(self, value) -> None:

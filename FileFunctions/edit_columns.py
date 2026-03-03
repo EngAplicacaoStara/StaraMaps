@@ -1,8 +1,24 @@
-from qgis.PyQt.QtCore import pyqtSlot, QObject
-from qgis.core import edit
+from qgis.PyQt.QtCore import pyqtSlot, QObject, QThread, pyqtSignal
+from qgis.core import edit, Qgis
+from qgis.utils import iface
 
+from ..loading import Loading
 from ..qgisFuncs import CustomButtonSelectable, upgrade_grid
 from ..values_window import ColumnValues
+
+
+class DeleteColumnsThread(QThread):
+    on_finished = pyqtSignal(bool)
+
+    def __init__(self, layer, indices):
+        super().__init__()
+        self.layer = layer
+        self.indices = indices
+
+    def run(self):
+        with edit(self.layer):
+            ok = self.layer.dataProvider().deleteAttributes(self.indices)
+        self.on_finished.emit(ok)
 
 
 class EditColumns(QObject):
@@ -14,15 +30,28 @@ class EditColumns(QObject):
         self.init()
 
     def init(self) -> None:
-        self.main.pushButton_return_column.clicked.connect(lambda: self.deleteLater())
+        for btn, sig in (
+            (self.main.pushButton_return_column, 'clicked'),
+            (self.main.pushButton_delete, 'clicked'),
+            (self.main.pushButton_add, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
 
         self.main.back_button_hide_signal.emit()
         self.main.stackedWidget.setCurrentIndex(5)
         self.main.pushButton_delete.setDisabled(True)
-        widgets = (self.main.gridLayout_16.itemAt(i).widget() for i in range(self.main.gridLayout_16.count()))
-        for widget in widgets:
-            widget.close()
-            widget.deleteLater()
+
+        for i in range(self.main.gridLayout_16.count()):
+            item = self.main.gridLayout_16.itemAt(i)
+            if item is not None:
+                widget = item.widget()
+                if widget is not None:
+                    widget.close()
+                    widget.deleteLater()
+
         self.selected_list = []
         self.unselected_list = []
 
@@ -31,6 +60,7 @@ class EditColumns(QObject):
         if names1:
             self.add_buttons_to_layout(names1)
 
+        self.main.pushButton_return_column.clicked.connect(lambda: self.deleteLater())
         self.main.pushButton_delete.clicked.connect(self.on_delete_click)
         self.main.pushButton_add.clicked.connect(self.on_add_click)
 
@@ -79,24 +109,42 @@ class EditColumns(QObject):
     def on_delete_click(self):
         list_button_index = []
         for button in self.selected_list:
-            index = button.index
-            list_button_index.append(index)
+            list_button_index.append(button.index)
             button.close()
             button.deleteLater()
 
-        if list_button_index:
-            with edit(self.main.layer):
-                self.main.layer.dataProvider().deleteAttributes(list_button_index)
-            self.main.layer.updateFields()
-            list_button_index.clear()
-        self.main.pushButton_delete.setDisabled(True)
+        if not list_button_index:
+            return
+
+        page = self.main.stackedWidget.widget(5)
+        self._loading = Loading(page)
+        self._loading.start()
+        self._loading.show()
+
+        self._delete_thread = DeleteColumnsThread(self.main.layer, list_button_index)
+        self._delete_thread.on_finished.connect(self._on_delete_finished)
+        self._delete_thread.start()
+
+    def _on_delete_finished(self, ok):
+        self._loading.stop()
+        self._loading.deleteLater()
+
+        if not ok:
+            iface.messageBar().pushMessage(
+                self.tr("Erro"), self.tr("Não foi possível deletar os campos."),
+                level=Qgis.Critical, duration=5
+            )
+            self.selected_list.clear()
+            self.unselected_list.clear()
+            return
+
+        self.main.layer.updateFields()
 
         if self.unselected_list:
             self.add_buttons_to_layout(self.unselected_list, replace=True)
 
+        self.main.pushButton_delete.setDisabled(True)
         upgrade_grid(self.main.layer, self.main.iface)
-        '''Atualizar a lista de campos dos widgets'''
-        # https://gis.stackexchange.com/questions/109078/deleting-column-field-in-pyqgis
         for item in self.main.itens:
             if item.filename == self.main.file_widget.filename:
                 self.main.file_widget.update_fields_list()
@@ -124,5 +172,13 @@ class EditColumns(QObject):
         print(f'{self.__class__} Deleted')
         self.main.stackedWidget.setCurrentIndex(0)
         self.main.back_button_show_signal.emit()
-        self.main.pushButton_return_column.disconnect()
+        for btn, sig in (
+            (self.main.pushButton_return_column, 'clicked'),
+            (self.main.pushButton_delete, 'clicked'),
+            (self.main.pushButton_add, 'clicked'),
+        ):
+            try:
+                getattr(btn, sig).disconnect()
+            except (RuntimeError, TypeError):
+                pass
         super().deleteLater()

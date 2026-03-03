@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis._core import QgsField
 
 from .loading import Loading
-from message import Message, Messages
+from .message import Message, Messages
 from .qgisFuncs import RemoveBiggerValues, RemoveSmallerValues, RemoveBetweenValues, ChangeMapValues, ChangeMean, \
     AddNewColumn
 
@@ -20,7 +20,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ValuesWindow(QWidget, FORM_CLASS):
     close_signal = pyqtSignal()
     finish_signal = pyqtSignal()
-    update_features_signal = pyqtSignal(object)
+    update_features_signal = pyqtSignal(object, object, object)
 
     def __init__(self, back_button=None, parent=None):
         super(ValuesWindow, self).__init__(parent)
@@ -62,6 +62,22 @@ class ValuesWindow(QWidget, FORM_CLASS):
     def on_percent_update(self, value):
         self.progressBar.setValue(int(value))
 
+    def _emit_update(self, worker, feats):
+        def callback():
+            self.loading.stop()
+            self.loading.deleteLater()
+            self.check_progress()
+            worker.deleteLater()
+            self.finish_signal.emit()
+            self.back_button.setEnabled(True)
+            self.deleteLater()
+
+        def progress(pct):
+            self.progressBar.setValue(int(pct))
+
+        self.progressBar.setValue(0)
+        self.update_features_signal.emit(feats, callback, progress)
+
 
 class BiggerValues(ValuesWindow):
     def __init__(self, min_v, max_v, features, geo, index, back_button, parent=None):
@@ -99,16 +115,9 @@ class BiggerValues(ValuesWindow):
             float(text),
             self.index
         )
-        self.remove_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.remove_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        self.remove_values.on_finished.connect(
+            lambda feats: self._emit_update(self.remove_values, feats)
+        )
         self.remove_values.on_percent_update.connect(self.on_percent_update)
         self.remove_values.start()
 
@@ -149,16 +158,9 @@ class SmallerValues(ValuesWindow):
             float(text),
             self.index
         )
-        self.remove_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.remove_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        self.remove_values.on_finished.connect(
+            lambda feats: self._emit_update(self.remove_values, feats)
+        )
         self.remove_values.on_percent_update.connect(self.on_percent_update)
         self.remove_values.start()
 
@@ -201,16 +203,9 @@ class BetweenValues(ValuesWindow):
             float(text_2),
             self.index
         )
-        self.remove_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.remove_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        self.remove_values.on_finished.connect(
+            lambda feats: self._emit_update(self.remove_values, feats)
+        )
         self.remove_values.on_percent_update.connect(self.on_percent_update)
         self.remove_values.start()
 
@@ -250,16 +245,9 @@ class ChangeMValues(ValuesWindow):
             float(text),
             self.index
         )
-        self.change_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.change_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        self.change_values.on_finished.connect(
+            lambda feats: self._emit_update(self.change_values, feats)
+        )
         self.change_values.on_percent_update.connect(self.on_percent_update)
         self.change_values.start()
 
@@ -268,7 +256,7 @@ class MeanValues(ValuesWindow):
     def __init__(self, field_name, current_mean, features, index, back_button, parent=None):
         super(MeanValues, self).__init__(back_button, parent)
         self.current_mean = current_mean
-        if self.current_mean == None:
+        if self.current_mean is None:
             self.current_mean = 0
         self.field_name = field_name
         self.features = features
@@ -301,16 +289,9 @@ class MeanValues(ValuesWindow):
         diff = new_mean - self.current_mean
 
         self.change_values = ChangeMean(self.features, None, diff, self.index)
-        self.change_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.change_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        self.change_values.on_finished.connect(
+            lambda feats: self._emit_update(self.change_values, feats)
+        )
         self.change_values.on_percent_update.connect(self.on_percent_update)
         self.change_values.start()
 
@@ -342,22 +323,31 @@ class ColumnValues(ValuesWindow):
             self.m.show()
             return
 
-        self.loading = Loading(self.goButton)
-        self.loading.start()
-        self.loading.show()
-        self.check_progress()
-        self.back_button.setEnabled(False)
-
         existing_fields = [field.name() for field in self.layer.fields()]
         if text_1 in existing_fields:
             self.m = Message(f"O campo '{text_1}' já existe.", self)
             self.m.show()
             return
 
-        if text_2.isnumeric():
-            area_field = QgsField(text_1, QMetaType.Type.Int)
+        try:
+            float(text_2)
+            is_numeric = True
+        except ValueError:
+            is_numeric = False
+
+        if is_numeric:
+            if '.' in text_2:
+                area_field = QgsField(text_1, QMetaType.Type.Double)
+            else:
+                area_field = QgsField(text_1, QMetaType.Type.Int)
         else:
             area_field = QgsField(text_1, QMetaType.Type.QString)
+
+        self.loading = Loading(self.goButton)
+        self.loading.start()
+        self.loading.show()
+        self.check_progress()
+        self.back_button.setEnabled(False)
 
         self.layer.startEditing()
         self.layer.dataProvider().addAttributes([area_field])
@@ -376,17 +366,8 @@ class ColumnValues(ValuesWindow):
         features = self.layer.getFeatures()
         self.n_c = AddNewColumn(features, idx, converted_value)
         self.n_c.on_finished.connect(
-            lambda x: (
-                self.update_features_signal.emit(x),
-                self.loading.stop(),
-                self.loading.deleteLater(),
-                self.check_progress(),
-                self.n_c.deleteLater(),
-                self.layer.updateFields(),
-                self.finish_signal.emit(),
-                self.back_button.setEnabled(True),
-                self.deleteLater()
-            ))
+            lambda feats: self._emit_update(self.n_c, feats)
+        )
         self.n_c.on_percent_update.connect(self.on_percent_update)
         self.n_c.start()
 
@@ -419,16 +400,15 @@ class GeneralValues(ValuesWindow):
         self.check_progress()
         self.back_button.setEnabled(False)
 
-        self.change_values = ChangeMapValues(self.features, None, int(text), self.index)
-        self.change_values.on_finished.connect(lambda feats: (
-            self.update_features_signal.emit(feats),
-            self.loading.stop(),
-            self.loading.deleteLater(),
-            self.check_progress(),
-            self.change_values.deleteLater(),
-            self.finish_signal.emit(),
-            self.back_button.setEnabled(True),
-            self.deleteLater()
-        ))
+        try:
+            value = int(text) if '.' not in text else float(text)
+        except ValueError:
+            self.m = Message(Messages.empty_field(self), self)
+            self.m.show()
+            return
+        self.change_values = ChangeMapValues(self.features, None, value, self.index)
+        self.change_values.on_finished.connect(
+            lambda feats: self._emit_update(self.change_values, feats)
+        )
         self.change_values.on_percent_update.connect(self.on_percent_update)
         self.change_values.start()
