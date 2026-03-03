@@ -66,7 +66,24 @@ if defined HAS_UNTRACKED_PY (
     )
 )
 
-:: ── 4. Atualizar versao no metadata.txt ──────────
+:: ── 4. Confirmar ação ─────────────────────────────
+echo.
+echo ------------------------------------------------
+echo  O que deseja fazer?
+echo.
+echo  [S] Commitar metadata.txt, criar tag !TAG! e gerar zip
+echo  [N] Apenas gerar o zip ^(sem commit nem tag^)
+echo ------------------------------------------------
+set /p CONFIRM=Escolha [S/N]:
+
+if /i "!CONFIRM!"=="s" goto :full_release
+if /i "!CONFIRM!"=="n" goto :zip_only
+echo ERRO: Opcao invalida.
+goto :fail
+
+:: ── Fluxo completo: commit + tag + zip ───────────
+:full_release
+
 echo.
 echo Atualizando metadata.txt  ^(version=!VERSION!^)...
 set _VER=!VERSION!
@@ -76,7 +93,6 @@ if errorlevel 1 (
     goto :fail
 )
 
-:: Verificar se houve mudança real
 git diff --quiet metadata.txt
 if not errorlevel 1 (
     echo   ^(metadata.txt ja estava com version=!VERSION!, nenhum commit necessario^)
@@ -85,7 +101,6 @@ if not errorlevel 1 (
     set SKIP_COMMIT=0
 )
 
-:: ── 5. Commit do metadata ─────────────────────────
 if "!SKIP_COMMIT!"=="0" (
     echo Commitando metadata.txt...
     git add metadata.txt
@@ -96,7 +111,6 @@ if "!SKIP_COMMIT!"=="0" (
     )
 )
 
-:: ── 6. Criar tag anotada ──────────────────────────
 echo.
 echo Criando tag anotada !TAG!...
 git tag -a "!TAG!" -m "Release !TAG!"
@@ -105,7 +119,6 @@ if errorlevel 1 (
     goto :fail
 )
 
-:: ── 7. Gerar zip via git archive ──────────────────
 echo.
 echo Gerando !ZIPNAME!...
 git archive --prefix=StaraMaps/ -o "!ZIPNAME!" "!TAG!"
@@ -116,7 +129,6 @@ if errorlevel 1 (
     goto :fail
 )
 
-:: ── 8. Resumo ─────────────────────────────────────
 echo.
 echo ================================================
 echo   Release !VERSION! criada com sucesso!
@@ -128,6 +140,29 @@ echo   Proximos passos:
 echo     1. git push origin main
 echo     2. git push origin !TAG!
 echo     3. Publicar !ZIPNAME! em https://plugins.qgis.org
+echo ================================================
+echo.
+pause
+endlocal
+exit /b 0
+
+:: ── Apenas zip: usa HEAD sem commit nem tag ───────
+:zip_only
+
+echo.
+echo Gerando !ZIPNAME! a partir do HEAD atual...
+git archive --prefix=StaraMaps/ -o "!ZIPNAME!" HEAD
+if errorlevel 1 (
+    echo ERRO: Falha ao gerar zip.
+    goto :fail
+)
+
+echo.
+echo ================================================
+echo   Zip gerado ^(sem commit e sem tag^)
+echo.
+echo   Arquivo : !ZIPNAME!
+echo   Commit  : HEAD ^(nenhuma tag criada^)
 echo ================================================
 echo.
 pause
