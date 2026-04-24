@@ -6,6 +6,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant, QMetaType, QRegular
 from qgis.PyQt.QtGui import QRegularExpressionValidator
 from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis._core import QgsField
+from qgis.utils import iface
 
 from .loading import Loading
 from .message import Message, Messages
@@ -14,7 +15,7 @@ from .qgisFuncs import RemoveBiggerValues, RemoveSmallerValues, RemoveBetweenVal
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/ValuesWindow.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/ValuesWindow.ui'))
 
 
 class ValuesWindow(QWidget, FORM_CLASS):
@@ -71,6 +72,9 @@ class ValuesWindow(QWidget, FORM_CLASS):
             self.loading.deleteLater()
             self.check_progress()
             worker.deleteLater()
+            after_update = getattr(self, '_after_update', None)
+            if callable(after_update):
+                after_update()
             self.finish_signal.emit()
             self.back_button.setEnabled(True)
             self.deleteLater()
@@ -304,6 +308,7 @@ class ColumnValues(ValuesWindow):
     def __init__(self, layer, back_button, parent=None):
         super(ColumnValues, self).__init__(back_button, parent)
         self.layer = layer
+        self._started_edit_session = False
 
         self.goButton.setText(self.tr("Avançar"))
         self.infoLabel.setText(self.tr("Nome da Coluna"))
@@ -351,8 +356,16 @@ class ColumnValues(ValuesWindow):
         self.loading.show()
         self.check_progress()
         self.back_button.setEnabled(False)
+        self._started_edit_session = not self.layer.isEditable()
+        if self._started_edit_session and not self.layer.startEditing():
+            self.loading.stop()
+            self.loading.deleteLater()
+            self.check_progress()
+            self.back_button.setEnabled(True)
+            self.m = Message(self.tr("Não foi possível iniciar a edição da camada."), self)
+            self.m.show()
+            return
 
-        self.layer.startEditing()
         self.layer.dataProvider().addAttributes([area_field])
         self.layer.updateFields()
 
@@ -373,6 +386,14 @@ class ColumnValues(ValuesWindow):
         )
         self.n_c.on_percent_update.connect(self.on_percent_update)
         self.n_c.start()
+
+    def _after_update(self):
+        if self._started_edit_session:
+            if not self.layer.commitChanges():
+                err = self.layer.commitErrors()
+                msg = err[0] if err else self.tr("Não foi possível salvar as edições da camada.")
+                iface.messageBar().pushMessage(self.tr("Erro"), msg)
+                self.layer.rollBack()
 
 
 class GeneralValues(ValuesWindow):

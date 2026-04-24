@@ -8,7 +8,7 @@ from qgis.core import Qgis
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/field_name.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/field_name.ui'))
 
 
 class FieldName(QWidget, FORM_CLASS):

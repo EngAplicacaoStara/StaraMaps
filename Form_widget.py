@@ -2,8 +2,8 @@ import os
 import sys
 
 from qgis.PyQt import uic, QtWidgets, QtCore, QtGui
-from qgis.PyQt.QtCore import QPoint, QRegExp, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer, QCoreApplication
-from qgis.PyQt.QtGui import QColor, QRegExpValidator, QFocusEvent
+from qgis.PyQt.QtCore import QPoint, QSize, pyqtSlot, pyqtSignal, QModelIndex, QTimer, QCoreApplication, QRegularExpression
+from qgis.PyQt.QtGui import QColor, QRegularExpressionValidator, QFocusEvent
 from qgis.PyQt.QtWidgets import QGraphicsDropShadowEffect, QLabel, QLineEdit, QApplication, QComboBox, QListWidget
 
 from .qgisFuncs import TextInfoTest
@@ -11,7 +11,7 @@ from .qgisFuncs import TextInfoTest
 sys.path.append(os.path.dirname(__file__))
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/Form.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/Form.ui'))
 
 
 class FloatComboBox(QComboBox):
@@ -82,13 +82,14 @@ class FloatComboBox(QComboBox):
 
 class _FocusInFilter(QtCore.QObject):
     """Event filter that triggers a callback on FocusIn without replacing focusInEvent."""
+    FOCUS_IN_EVENT_TYPE = 8  # QEvent::FocusIn (Qt5/Qt6 compatible value)
 
     def __init__(self, callback, parent=None):
         super().__init__(parent)
         self._callback = callback
 
     def eventFilter(self, obj, event):
-        if event.type() == QtCore.QEvent.FocusIn:
+        if int(event.type()) == self.FOCUS_IN_EVENT_TYPE:
             self._callback("")
         return False  # pass event through so original focusInEvent runs
 
@@ -148,20 +149,42 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
     def init(self):
 
         self.float_list_widget = QListWidget(self)
+        self.float_list_widget.setStyleSheet('''
+            QListWidget {
+                background-color: rgb(255, 255, 255);
+                color: rgb(0, 0, 0);
+                border: 1px solid rgb(200, 200, 200);
+                border-radius: 3px;
+                font: 10pt;
+                outline: none;
+            }
+            QListWidget::item {
+                color: rgb(0, 0, 0);
+                padding: 4px 6px;
+            }
+            QListWidget::item:selected {
+                background-color: rgb(243, 116, 53);
+                color: rgb(255, 255, 255);
+            }
+            QListWidget::item:hover {
+                background-color: rgb(255, 235, 225);
+                color: rgb(0, 0, 0);
+            }
+        ''')
         self.float_list_widget.itemClicked.connect(self.list_item_clicked)
         self.float_list_widget.hide()
 
-        regex = QRegExp("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ - 0-9]{0,30}")
-        regex_only_num = QRegExp("[0-9]{4}")
-        pro_validator = QRegExpValidator(regex, self.proLineEdit)
-        farm_validator = QRegExpValidator(regex, self.farmLineEdit)
-        tal_validator = QRegExpValidator(regex, self.talLineEdit)
-        ano_validator = QRegExpValidator(regex_only_num, self.anoLineEdit)
-        cul_validator = QRegExpValidator(regex, self.culLineEdit)
-        app_vilidator = QRegExpValidator(regex, self.appTyLineEdit)
-        bord_validator = QRegExpValidator(regex, self.bordLineEdit)
-        line_validator = QRegExpValidator(regex, self.lineLineEdit)
-        point_validator = QRegExpValidator(regex, self.pointLineEdit)
+        regex = QRegularExpression("[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ - 0-9]{0,30}")
+        regex_only_num = QRegularExpression("[0-9]{4}")
+        pro_validator = QRegularExpressionValidator(regex, self.proLineEdit)
+        farm_validator = QRegularExpressionValidator(regex, self.farmLineEdit)
+        tal_validator = QRegularExpressionValidator(regex, self.talLineEdit)
+        ano_validator = QRegularExpressionValidator(regex_only_num, self.anoLineEdit)
+        cul_validator = QRegularExpressionValidator(regex, self.culLineEdit)
+        app_vilidator = QRegularExpressionValidator(regex, self.appTyLineEdit)
+        bord_validator = QRegularExpressionValidator(regex, self.bordLineEdit)
+        line_validator = QRegularExpressionValidator(regex, self.lineLineEdit)
+        point_validator = QRegularExpressionValidator(regex, self.pointLineEdit)
 
         self.proLineEdit.setValidator(pro_validator)
         self.farmLineEdit.setValidator(farm_validator)
@@ -186,9 +209,9 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
         self.effect.setOffset(1.0)
         self.setGraphicsEffect(self.effect)
 
-        self.m_direction = QtCore.Qt.Horizontal
+        self.m_direction = QtCore.Qt.Orientation.Horizontal
         self.m_speed = 500
-        self.m_animationtype = QtCore.QEasingCurve.OutCubic
+        self.m_animationtype = QtCore.QEasingCurve.Type.OutCubic
         self.m_now = 0
         self.m_next = 0
         self.m_wrap = False
@@ -365,6 +388,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
                             border: none;
                             border-bottom: 1px solid;
                             background-color: rgb(250, 250, 250);
+                            color: rgb(45, 45, 45);
                             border-bottom-color: rgb(255, 0, 0);
                             font: 10pt url(:/plugins/StaraMaps/Roboto-Regular.ttf);
                         }
@@ -413,7 +437,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
         )
         self.anim_group.stateChanged.connect(self.on_anim_group_state_changed)
 
-        self.anim_group.setDirection(QtCore.QAbstractAnimation.Forward)
+        self.anim_group.setDirection(QtCore.QAbstractAnimation.Direction.Forward)
         for lineW in listToAnim:
             startValue = lineW.pos()
             endValue = QPoint(startValue.x(), startValue.y() + 8)
@@ -433,16 +457,16 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def on_anim_group_state_changed(self, state):
 
-        if state == QtCore.QAbstractAnimation.Running:
+        if state == QtCore.QAbstractAnimation.State.Running:
             self.addPushButton.setEnabled(False)
-        elif state == QtCore.QAbstractAnimation.Stopped:
+        elif state == QtCore.QAbstractAnimation.State.Stopped:
             self.delay_timer.start(1000)
 
     def animGroupBack(self):
         self.anim_group.disconnect()
         self.anim_group.finished.connect(self.animGroupBackLabelStyle)
-        self.anim_group.setDirection(QtCore.QAbstractAnimation.Backward)
-        self.anim_group.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
+        self.anim_group.setDirection(QtCore.QAbstractAnimation.Direction.Backward)
+        self.anim_group.start(QtCore.QAbstractAnimation.DeletionPolicy.DeleteWhenStopped)
 
     def animGroupBackLabelStyle(self):
         labels = self.frame_2.findChildren(QLabel)
@@ -464,6 +488,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
                             border-bottom: 1px solid;
                             border-bottom-color: rgb(235, 235, 235);
                             background-color: rgb(250, 250, 250);
+                            color: rgb(45, 45, 45);
                             font: 10pt url(:/plugins/StaraMaps/Roboto-Regular.ttf);
                         }
  
@@ -478,6 +503,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
 
                         QLineEdit:disabled{
                             background-color: rgb(230, 230, 230);
+                            color: rgb(130, 130, 130);
                         }
                     '''
             for lineE in lineEdits:
@@ -567,7 +593,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
         offsetx, offsety = self.stackedWidget.frameRect().width(), self.stackedWidget.frameRect().height()
         self.stackedWidget.widget(_next).setGeometry(self.stackedWidget.frameRect())
 
-        if not self.m_direction == QtCore.Qt.Horizontal:
+        if not self.m_direction == QtCore.Qt.Orientation.Horizontal:
             if _now < _next:
                 offsetx, offsety = 0, -offsety
             else:
@@ -607,7 +633,7 @@ class FormWidget(QtWidgets.QWidget, FORM_CLASS):
         self.m_next = _next
         self.m_now = _now
         self.m_active = True
-        anim_group.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
+        anim_group.start(QtCore.QAbstractAnimation.DeletionPolicy.DeleteWhenStopped)
 
     @QtCore.pyqtSlot()
     def animationDoneSlot(self):

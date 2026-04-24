@@ -5,6 +5,7 @@ import sys
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QThread, Qt, pyqtSignal, QCoreApplication
+from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import QWidget, QGraphicsDropShadowEffect
 from qgis.core import Qgis
 from qgis.utils import iface
@@ -13,7 +14,7 @@ from .loading import Loading
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/InfoWindow.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/InfoWindow.ui'))
 
 
 class InstallThread(QThread):
@@ -80,9 +81,23 @@ class InfoWindow(QWidget, FORM_CLASS):
 
     def __init__(self, parent=None):
         super(InfoWindow, self).__init__(parent)
-        self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setupUi(self)
+        # Qt6: label text can inherit a light-on-light palette; force readable color.
+        self.setStyleSheet(self.styleSheet() + '''
+            QLabel { color: rgb(45, 45, 45); }
+        ''')
+        # QSS alone can still be overridden by platform styles; set palette for the label.
+        label_palette = self.label.palette()
+        label_palette.setColor(QPalette.ColorRole.WindowText, QColor(45, 45, 45))
+        label_palette.setColor(QPalette.ColorRole.Text, QColor(45, 45, 45))
+        self.label.setPalette(label_palette)
+        self.label.setForegroundRole(QPalette.ColorRole.Text)
+        self.label.setStyleSheet('color: rgb(45, 45, 45);')
+        self.label.setWordWrap(True)
+        self.label.setMinimumHeight(22)
+        self.label.setVisible(True)
         self.init()
 
     def init(self) -> None:

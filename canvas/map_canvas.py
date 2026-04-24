@@ -13,7 +13,7 @@ from ..qgisFuncs import PolyMapTool, InfoWithoutIcon, TextInfoTest
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), '../ui/MapCanvas.ui'), resource_suffix='')
+    os.path.dirname(__file__), '../ui/MapCanvas.ui'))
 
 
 class MapCanvas(QWidget, FORM_CLASS):
@@ -29,14 +29,14 @@ class MapCanvas(QWidget, FORM_CLASS):
         super(MapCanvas, self).__init__(parent)
         self.setupUi(self)
 
-        self.smallerPushButtonCanvas.setCursor(QCursor(Qt.PointingHandCursor))
-        self.betweenPushButtonCanvas.setCursor(QCursor(Qt.PointingHandCursor))
-        self.biggerPushButtonCanvas.setCursor(QCursor(Qt.PointingHandCursor))
-        self.ResetPushButtonCanvasIn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.MaximizePushButtonCanvasIn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.OkPushButtonCanvasIn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.RevertPushButtonCanvasIn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.addPushButtonCanvasIn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.smallerPushButtonCanvas.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.betweenPushButtonCanvas.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.biggerPushButtonCanvas.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.ResetPushButtonCanvasIn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.MaximizePushButtonCanvasIn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.OkPushButtonCanvasIn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.RevertPushButtonCanvasIn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.addPushButtonCanvasIn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
         self.messages = TextInfoTest()
 
@@ -95,8 +95,8 @@ class MapCanvas(QWidget, FORM_CLASS):
         self.dock = QDockWidget()
         self.dock.topLevelChanged.connect(self.__check_dock_without_change)
         self.dock.setWindowTitle('Layer')
-        self.dock.setFeatures(QDockWidget.DockWidgetFloatable |
-                              QDockWidget.DockWidgetMovable)
+        self.dock.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetFloatable |
+                              QDockWidget.DockWidgetFeature.DockWidgetMovable)
         self.dock.setWidget(self.canvasInterpolate)
         self.layout_canvas.addWidget(self.dock)
         self.layout_canvas.setContentsMargins(0, 0, 0, 0)

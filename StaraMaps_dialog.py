@@ -38,14 +38,14 @@ from qgis.utils import iface
 
 from .File_widget import FileWidget
 from .Form_widget import FormWidget
-from .PointMapImport import PointMap
+from .PointMapImport import CsvNoCoordinateColumnsError, PointMap
 from .loading import Loading
 from .qgisFuncs import print_log, VRCTOSHP, LOGTOSHP, KMLTOSHP, upgrade_grid, remove_file
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/StaraMaps_dialog_base.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/StaraMaps_dialog_base.ui'))
 
 
 class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
@@ -56,9 +56,19 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def __init__(self, layers=[], iface=None, project=None, parent=None):
         super(StaraMapsDialog, self).__init__(parent)
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setupUi(self)
+        # Qt6 + palette/theme can render text as white over light backgrounds.
+        # Force readable default text color for text-bearing widgets.
+        self.setStyleSheet(self.styleSheet() + '''
+            QLabel, QLineEdit, QTextEdit, QPlainTextEdit, QComboBox {
+                color: rgb(45, 45, 45);
+            }
+            QLineEdit:disabled, QTextEdit:disabled, QPlainTextEdit:disabled, QComboBox:disabled {
+                color: rgb(130, 130, 130);
+            }
+        ''')
 
 
 
@@ -96,6 +106,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.dragPos = QPoint()
         self.lastItemsSelected = []
+        self.sequential = None
 
         self.pushButtonClose.clicked.connect(self.close)
         self.frame_7.setMaximumWidth(0)
@@ -264,12 +275,13 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
                     print(f"{widget.layer_id} {layer_id} added.")
 
     def mousePressEvent(self, event):
-        self.dragPos = event.globalPos()
+        self.dragPos = event.globalPosition().toPoint()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.LeftButton:
-            self.move(self.pos() + event.globalPos() - self.dragPos)
-            self.dragPos = event.globalPos()
+        if event.buttons() & Qt.MouseButton.LeftButton:
+            current_pos = event.globalPosition().toPoint()
+            self.move(self.pos() + current_pos - self.dragPos)
+            self.dragPos = current_pos
             event.accept()
 
     @pyqtSlot(object)
@@ -285,8 +297,8 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
     def backAnimation(self):
         self.fo.close()
         self.sequentialTemp.disconnect()
-        self.sequentialTemp.setDirection(QAbstractAnimation.Backward)
-        self.widAnim1.setDirection(QAbstractAnimation.Backward)
+        self.sequentialTemp.setDirection(QAbstractAnimation.Direction.Backward)
+        self.widAnim1.setDirection(QAbstractAnimation.Direction.Backward)
         self.widAnim1.disconnect()
         self.widAnim1.finished.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.sequentialTemp.start()
@@ -329,13 +341,13 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.stackedWidget.setCurrentIndex(1)
 
         self.widAnim1 = QPropertyAnimation(self.frame_main_window, b"maximumSize")
-        self.widAnim1.setEasingCurve(QEasingCurve.InOutCubic)
+        self.widAnim1.setEasingCurve(QEasingCurve.Type.InOutCubic)
         startValue = self.size()
         endValue = QSize(400, startValue.height())
         self.widAnim1.setStartValue(startValue)
         self.widAnim1.setEndValue(endValue)
         self.widAnim1.setDuration(200)
-        self.widAnim1.setDirection(QAbstractAnimation.Forward)
+        self.widAnim1.setDirection(QAbstractAnimation.Direction.Forward)
         self.widAnim1.finished.connect(lambda: self.doAnimationFinished(self.tempWidget, widget))
         self.widAnim1.start()
 
@@ -357,7 +369,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
 
         temp_widget.show()
         self.temAnim1 = QPropertyAnimation(temp_widget, b"pos")
-        self.temAnim1.setEasingCurve(QEasingCurve.InOutCubic)
+        self.temAnim1.setEasingCurve(QEasingCurve.Type.InOutCubic)
         startValue1 = temp_widget.pos()
         endValue1 = QPoint(centerx, temp_widget.pos().y())
         self.temAnim1.setStartValue(startValue1)
@@ -365,7 +377,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.temAnim1.setDuration(100)
 
         self.temAnim2 = QPropertyAnimation(temp_widget, b"pos")
-        self.temAnim2.setEasingCurve(QEasingCurve.InOutCubic)
+        self.temAnim2.setEasingCurve(QEasingCurve.Type.InOutCubic)
         startValue2 = endValue1
         endValue2 = QPoint(centerx, temp_widget.pos().y() + 10)
         self.temAnim2.setStartValue(startValue2)
@@ -377,7 +389,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.sequentialTemp.addAnimation(self.temAnim2)
         # self.sequentialTemp.finished.connect(lambda: self.pushButtonBack.graphicsEffect.setEnable())
         self.sequentialTemp.finished.connect(lambda: self.show_file_options(original_widget))
-        self.sequentialTemp.setDirection(QAbstractAnimation.Forward)
+        self.sequentialTemp.setDirection(QAbstractAnimation.Direction.Forward)
         self.sequentialTemp.start()
 
         self.buttonBackShowAnim = QPropertyAnimation(eff, b"opacity")
@@ -545,7 +557,8 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.listWidget.graphicsEffect().setEnabled(False)
 
     def frame_6_drag_leave_event(self, event):
-        self.sequential.stop()
+        if self.sequential is not None:
+            self.sequential.stop()
         self.frame_8.move(QPoint(100, 80))
 
     def frame_6_drag_enter_event(self, event):
@@ -566,13 +579,13 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def drag_accept_animation(self):
         self.dragAnim = QPropertyAnimation(self.frame_8, b"pos")
-        self.dragAnim.setEasingCurve(QEasingCurve.InOutCubic)
+        self.dragAnim.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.dragAnim.setStartValue(QPoint(100, 80))
         self.dragAnim.setEndValue(QPoint(100, 40))
         self.dragAnim.setDuration(1000)
 
         self.dragAnim2 = QPropertyAnimation(self.frame_8, b"pos")
-        self.dragAnim2.setEasingCurve(QEasingCurve.InOutCubic)
+        self.dragAnim2.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.dragAnim2.setStartValue(QPoint(100, 40))
         self.dragAnim2.setEndValue(QPoint(100, 80))
         self.dragAnim2.setDuration(1000)
@@ -614,7 +627,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
             widget = self.listWidget.itemWidget(item)
             if widget.labelFileName.text() == file_name_without_ext:
                 widget.do_animation()
-                if hasattr(self, 'sequential'):
+                if self.sequential is not None:
                     self.sequential.stop()
                 self.frame_8.move(QPoint(100, 80))
                 return
@@ -649,9 +662,18 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
             only_path = '/'.join(original_path_split)
             new_path = only_path + '/' + file_name + '.shp'
 
-            self.p_m = PointMap(file, new_path, self.frame_6)
+            try:
+                self.p_m = PointMap(file, new_path, self.frame_6)
+            except CsvNoCoordinateColumnsError as e:
+                _iface = self.iface if self.iface is not None else iface
+                _iface.messageBar().pushWarning(self.tr("Erro"), str(e))
+                if self.sequential is not None:
+                    self.sequential.stop()
+                self.frame_8.move(QPoint(100, 80))
+                return
+
             self.p_m.cancel_signal.connect(lambda: (
-                self.sequential.stop(),
+                self.sequential.stop() if self.sequential is not None else None,
                 self.frame_8.move(QPoint(100, 80)),
                 self.p_m.deleteLater()
             ))
@@ -716,7 +738,7 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def check_file_extension_finished(self):
         self.checkhavefiles()
-        if hasattr(self, 'sequential'):
+        if self.sequential is not None:
             self.sequential.stop()
         self.frame_8.move(QPoint(100, 80))
 
@@ -728,15 +750,15 @@ class StaraMapsDialog(QtWidgets.QDialog, FORM_CLASS):
         itens_count = self.listWidget.count()
         if (itens_count == 0 and t == 'add') or (itens_count > 0 and t == 'add'):
             self.anim = QPropertyAnimation(self.frame_7, b"maximumSize")
-            self.anim.setEasingCurve(QEasingCurve.InOutCubic)
+            self.anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
             self.anim.setStartValue(QSize(0, self.frame_7.height()))
             self.anim.setEndValue(QSize(515, self.frame_7.height()))
-            self.anim.setDirection(QAbstractAnimation.Forward)
+            self.anim.setDirection(QAbstractAnimation.Direction.Forward)
             if itens_count == 0 and t == 'add':
                 self.anim.finished.connect(self.fileTemp.show)
 
         elif itens_count == 0 and t == 'delete':
-            self.anim.setDirection(QAbstractAnimation.Backward)
+            self.anim.setDirection(QAbstractAnimation.Direction.Backward)
             self.anim.finished.connect(self.anim.deleteLater)
 
         self.anim.start()

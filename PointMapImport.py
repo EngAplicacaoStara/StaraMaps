@@ -15,7 +15,11 @@ from .message import Message, Messages
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/PointMap.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/PointMap.ui'))
+
+
+class CsvNoCoordinateColumnsError(ValueError):
+    """CSV sem duas colunas numéricas identificáveis como coordenadas."""
 
 
 class PointToShpConvert(QThread):
@@ -175,7 +179,9 @@ class PointMap(QWidget, FORM_CLASS):
 
         # Verifica se temos pelo menos duas colunas com alta variabilidade e precisão
         if len(sorted_columns) < 2:
-            raise ValueError("Não foi possível identificar duas colunas de coordenadas no arquivo CSV.")
+            raise CsvNoCoordinateColumnsError(
+                "Não foi possível identificar duas colunas de coordenadas no arquivo CSV."
+            )
 
         # Seleciona as duas colunas com maior variabilidade e precisão como coordenadas
 

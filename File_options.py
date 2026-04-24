@@ -7,8 +7,8 @@ from pathlib import Path
 
 import utm
 from PIL import Image
-from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize, QTimer, QCoreApplication
-from qgis.PyQt.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon
+from qgis.PyQt.QtCore import pyqtSlot, QThread, pyqtSignal, QVariant, Qt, QPointF, QSize, QTimer, QCoreApplication, QUrl
+from qgis.PyQt.QtGui import QFont, QPolygonF, QColor, QPaintEvent, QPainter, QPen, QIcon, QDesktopServices
 from qgis.PyQt.QtWidgets import QFileDialog, QPushButton
 from qgis.PyQt import QtWidgets
 from qgis.PyQt import uic
@@ -35,7 +35,7 @@ from .qgisFuncs import list_groups_linked_to_layer, print_log, InfoButton, add_b
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/FileOptions.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/FileOptions.ui'))
 
 
 class CSVThread(QThread):
@@ -181,10 +181,10 @@ class PrintPDF(QThread):
                 title.setText(name)
                 _fmt = QgsTextFormat()
                 font_size = max(6, min(12, int(step * 0.7)))
-                _fmt.setFont(QFont("Arial", font_size, QFont.Bold))
+                _fmt.setFont(QFont("Arial", font_size, QFont.Weight.Bold))
                 _fmt.setSize(font_size)
                 title.setTextFormat(_fmt)
-                title.setVAlign(Qt.AlignVCenter)
+                title.setVAlign(Qt.AlignmentFlag.AlignVCenter)
                 title.setFixedSize(QgsLayoutSize(100, box_h))
                 title.attemptMove(
                     QgsLayoutPoint(8 + (w - x) + 2, item_y,
@@ -253,14 +253,14 @@ class PrintPDF(QThread):
 
         first_r, node_h, count = self.addLegend(layout, map_height, page_height)
 
-        name = tree[-2] if len(tree) >= 2 else ''
-        fild = tree[-3] if len(tree) >= 3 else ''
-        tal  = tree[-4] if len(tree) >= 4 else ''
+        name = tree[-2] if len(tree) >= 2 else 'nada'
+        fild = tree[-3] if len(tree) >= 3 else 'nada'
+        tal = tree[-4] if len(tree) >= 4 else 'nada'
 
         title = QgsLayoutItemLabel(layout)
         title.setText(name)
         _fmt = QgsTextFormat()
-        _fmt.setFont(QFont("Arial", 28, QFont.Bold))
+        _fmt.setFont(QFont("Arial", 28, QFont.Weight.Bold))
         _fmt.setSize(28)
         title.setTextFormat(_fmt)
         title.adjustSizeToText()
@@ -273,8 +273,8 @@ class PrintPDF(QThread):
         _fmt.setFont(QFont("Arial", 15))
         _fmt.setSize(15)
         title1.setTextFormat(_fmt)
-        title1.setHAlign(Qt.AlignRight)
-        title1.setVAlign(Qt.AlignTop)
+        title1.setHAlign(Qt.AlignmentFlag.AlignRight)
+        title1.setVAlign(Qt.AlignmentFlag.AlignTop)
         title1.adjustSizeToText()
         title1.attemptMove(
             QgsLayoutPoint(page_width - title1.sizeForText().width() - 5, 5, QgsUnitTypes.LayoutMillimeters))
@@ -475,6 +475,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         self.file_name = None
         self.st = None
         self.loading_export = None
+        self._expected_pdf_path = None
+        self._pdf_export_triggered = False
         self.csv_utm = None
         self.csv = None
         self.loading_csv_utm = None
@@ -622,8 +624,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         @pyqtSlot()
         def open_path():
             dire = QtWidgets.QFileDialog.getExistingDirectory(self, self.tr("Salvar"), home,
-                                                              QtWidgets.QFileDialog.ShowDirsOnly |
-                                                              QtWidgets.QFileDialog.DontResolveSymlinks)
+                                                              QtWidgets.QFileDialog.Option.ShowDirsOnly |
+                                                              QtWidgets.QFileDialog.Option.DontResolveSymlinks)
 
             self.currentPath.setText(dire)
 
@@ -721,8 +723,14 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
     @staticmethod
     def start_file(path):
-        if os.path.exists(path):
-            os.startfile(os.path.realpath(path))
+        if not os.path.exists(path):
+            return False
+        real_path = os.path.realpath(path)
+        try:
+            os.startfile(real_path)
+            return True
+        except Exception:
+            return QDesktopServices.openUrl(QUrl.fromLocalFile(real_path))
 
     @pyqtSlot()
     def export_csv(self) -> None:
@@ -805,8 +813,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
         @pyqtSlot()
         def on_path_select():
             dire = QtWidgets.QFileDialog.getExistingDirectory(self, self.tr("Salvar"), home,
-                                                              QtWidgets.QFileDialog.ShowDirsOnly |
-                                                              QtWidgets.QFileDialog.DontResolveSymlinks)
+                                                              QtWidgets.QFileDialog.Option.ShowDirsOnly |
+                                                              QtWidgets.QFileDialog.Option.DontResolveSymlinks)
 
             self.currentPath_pdf.setText(dire)
 
@@ -864,6 +872,20 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
                 self.loading_pdf.start()
                 self.loading_pdf.show()
+                self._pdf_export_triggered = False
+                out_dir = self.currentPath_pdf.text().strip()
+                if not out_dir or not os.path.isdir(out_dir):
+                    self._cleanup_pdf_loading()
+                    self.iface.messageBar().pushMessage(
+                        self.tr("Erro"),
+                        self.tr("Diretório de saída inválido para o PDF."),
+                        level=Qgis.Critical, duration=6
+                    )
+                    return
+                safe_layer_name = "".join(ch for ch in self.layer_name if ch not in '\\/:*?"<>|').strip()
+                if not safe_layer_name:
+                    safe_layer_name = "mapa"
+                self._expected_pdf_path = os.path.join(out_dir, f"{safe_layer_name}.pdf")
 
                 self.print_thread = PrintPDF(self.layer,
                                              self.project,
@@ -871,10 +893,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
                                              option_image_name,
                                              self.comboBox_unit.currentText())
                 self.print_thread.on_finished.connect(self.open_pdf)
-                self.print_thread.on_finished.connect(lambda: (self.loading_pdf.stop(),
-                                                               self.loading_pdf.hide(),
-                                                               self.loading_pdf.deleteLater()))
-                self.print_thread.start()
+                self.print_thread.on_finished.connect(self._cleanup_pdf_loading)
+                QTimer.singleShot(0, self._execute_print_pdf)
 
             self.stackedWidget_3.setCurrentIndex(1)
             try:
@@ -912,8 +932,8 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
     def widget_paintEvent(self, a0: QPaintEvent) -> None:
         painter = QPainter(self.widget)
-        painter.setRenderHints(QPainter.Antialiasing)
-        painter.setPen(QPen(Qt.black, 2, Qt.DotLine))
+        painter.setRenderHints(QPainter.RenderHint.Antialiasing)
+        painter.setPen(QPen(Qt.GlobalColor.black, 2, Qt.PenStyle.DotLine))
         x_frame = self.frame_28.x()
         width_frame = self.frame_28.width()
         y_frame = self.frame_28.y()
@@ -929,19 +949,70 @@ class FileOptions(QtWidgets.QWidget, FORM_CLASS):
 
     @pyqtSlot(object)
     def open_pdf(self, layout):
-
-        path = self.currentPath_pdf.text()
-
-        path += '/' + self.layer_name + '.pdf'
+        self._pdf_export_triggered = True
+        path = self._expected_pdf_path or os.path.join(self.currentPath_pdf.text(), f"{self.layer_name}.pdf")
 
         exporter = QgsLayoutExporter(layout)
         result = exporter.exportToPdf(path, QgsLayoutExporter.PdfExportSettings())
+        if result == 3:
+            # File error (locked/no permission/existing handle). Retry with unique name.
+            base, ext = os.path.splitext(path)
+            for i in range(1, 6):
+                alt_path = f"{base}_{i}{ext}"
+                result = exporter.exportToPdf(alt_path, QgsLayoutExporter.PdfExportSettings())
+                if result == QgsLayoutExporter.Success:
+                    path = alt_path
+                    break
         if result != QgsLayoutExporter.Success:
             self.iface.messageBar().pushMessage(
-                self.tr("Erro"), self.tr("Falha ao exportar PDF."),
-                level=Qgis.Critical, duration=5
+                self.tr("Erro"),
+                f"{self.tr('Falha ao exportar PDF.')} ({self.tr('código')}: {int(result)})\n{path}",
+                level=Qgis.Critical, duration=8
             )
-        self.start_file(path)
+        else:
+            opened = self.start_file(path)
+            if not opened:
+                self.iface.messageBar().pushMessage(
+                    self.tr("Aviso"),
+                    self.tr("PDF gerado, mas não foi possível abrir automaticamente."),
+                    level=Qgis.Warning, duration=5
+                )
 
         manager = self.project.layoutManager()
         manager.removeLayout(layout)
+
+    @pyqtSlot()
+    def _cleanup_pdf_loading(self):
+        loading = getattr(self, 'loading_pdf', None)
+        if loading is not None:
+            loading.stop()
+            loading.hide()
+            loading.deleteLater()
+            self.loading_pdf = None
+
+    @pyqtSlot()
+    def _on_print_pdf_thread_finished(self):
+        # Guarantees loading cleanup even when worker fails before on_finished.
+        self._cleanup_pdf_loading()
+        if not self._pdf_export_triggered:
+            self.iface.messageBar().pushMessage(
+                self.tr("Erro"),
+                self.tr("Falha na geração do layout para PDF."),
+                level=Qgis.Critical, duration=5
+            )
+
+    @pyqtSlot()
+    def _execute_print_pdf(self):
+        error = None
+        try:
+            self.print_thread.run()
+        except Exception as exc:
+            error = str(exc)
+        finally:
+            if not self._pdf_export_triggered:
+                self._cleanup_pdf_loading()
+                self.iface.messageBar().pushMessage(
+                    self.tr("Erro"),
+                    error or self.tr("Falha na geração do layout para PDF."),
+                    level=Qgis.Critical, duration=6
+                )

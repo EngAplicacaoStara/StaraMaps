@@ -1,24 +1,10 @@
-from qgis.PyQt.QtCore import pyqtSlot, QObject, QThread, pyqtSignal, QCoreApplication
+from qgis.PyQt.QtCore import pyqtSlot, QObject, pyqtSignal, QCoreApplication, QTimer
 from qgis.core import edit, Qgis
 from qgis.utils import iface
 
 from ..loading import Loading
 from ..qgisFuncs import CustomButtonSelectable, upgrade_grid
 from ..values_window import ColumnValues
-
-
-class DeleteColumnsThread(QThread):
-    on_finished = pyqtSignal(bool)
-
-    def __init__(self, layer, indices):
-        super().__init__()
-        self.layer = layer
-        self.indices = indices
-
-    def run(self):
-        with edit(self.layer):
-            ok = self.layer.dataProvider().deleteAttributes(self.indices)
-        self.on_finished.emit(ok)
 
 
 class EditColumns(QObject):
@@ -124,18 +110,43 @@ class EditColumns(QObject):
         self._loading = Loading(page)
         self._loading.start()
         self._loading.show()
+        # QgsVectorLayer editing is not thread-safe in QGIS. Run on main thread
+        # after paint cycle so the loading indicator becomes visible first.
+        QTimer.singleShot(0, lambda: self._delete_columns(list_button_index))
 
-        self._delete_thread = DeleteColumnsThread(self.main.layer, list_button_index)
-        self._delete_thread.on_finished.connect(self._on_delete_finished)
-        self._delete_thread.start()
+    def _delete_columns(self, indices):
+        ok = False
+        error_msg = ""
+        # Ensure deterministic order and avoid duplicated indices.
+        indices = sorted(set(indices), reverse=True)
+        try:
+            # If layer is already in edit mode (pencil enabled), delete through
+            # layer edit buffer instead of provider direct call.
+            if self.main.layer.isEditable():
+                ok = True
+                for idx in indices:
+                    if not self.main.layer.deleteAttribute(idx):
+                        ok = False
+                        error_msg = self.tr("Falha ao remover um ou mais campos na sessão de edição atual.")
+                        break
+            else:
+                with edit(self.main.layer):
+                    ok = self.main.layer.dataProvider().deleteAttributes(indices)
+                    if not ok:
+                        error_msg = self.tr("O provedor de dados recusou a exclusão dos campos.")
+        except Exception as exc:
+            ok = False
+            error_msg = str(exc)
+        self._on_delete_finished(ok, error_msg)
 
-    def _on_delete_finished(self, ok):
+    def _on_delete_finished(self, ok, error_msg=""):
         self._loading.stop()
         self._loading.deleteLater()
 
         if not ok:
             iface.messageBar().pushMessage(
-                self.tr("Erro"), self.tr("Não foi possível deletar os campos."),
+                self.tr("Erro"),
+                error_msg or self.tr("Não foi possível deletar os campos."),
                 level=Qgis.Critical, duration=5
             )
             self.selected_list.clear()
@@ -148,7 +159,11 @@ class EditColumns(QObject):
             self.add_buttons_to_layout(self.unselected_list, replace=True)
 
         self.main.pushButton_delete.setDisabled(True)
-        upgrade_grid(self.main.layer, self.main.iface)
+        field_count = len(self.main.layer.fields())
+        if field_count > 0:
+            safe_index = min(self.main.file_widget.valueComboBox.currentIndex(), field_count - 1)
+            safe_index = max(safe_index, 0)
+            upgrade_grid(self.main.layer, self.main.iface, index=safe_index)
         for item in self.main.itens:
             if item.filename == self.main.file_widget.filename:
                 self.main.file_widget.update_fields_list()

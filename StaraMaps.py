@@ -33,6 +33,7 @@ from qgis._core import QgsLayerTreeGroup
 from qgis.core import Qgis, QgsProject, QgsRasterLayer
 
 from .StaraMaps_dialog import StaraMapsDialog
+from . import resources
 
 # Initialize Qt resources from file resources.py
 # Import the code for the dialog
@@ -90,6 +91,7 @@ class StaraMaps:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.dlg = None
 
         QgsProject.instance().legendLayersAdded.connect(self.enableFeatCountAndAlphaSlider)
 
@@ -265,7 +267,7 @@ class StaraMaps:
 
         # self.dlg.checkhavefiles()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg.exec()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
@@ -294,7 +296,10 @@ class StaraMaps:
             self.info.show()
             # self.init_plugin()
         else:
-            # show the dialog
+            # Create dialog lazily if startup flow has not created it yet.
+            if self.dlg is None:
+                self.init_plugin()
+                return
 
             if self.dlg.isHidden():
                 self.dlg.show()
@@ -304,7 +309,7 @@ class StaraMaps:
 
             # self.dlg.checkhavefiles()
             # Run the dialog event loop
-            result = self.dlg.exec_()
+            result = self.dlg.exec()
             # See if OK was pressed
             if result:
                 # Do something useful here - delete the line containing pass and

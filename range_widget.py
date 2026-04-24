@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/range.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/range.ui'))
 
 
 class RangeWidget(QWidget, FORM_CLASS):

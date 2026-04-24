@@ -14,6 +14,9 @@ from qgis.utils import iface
 from qgis.core import Qgis
 
 LOG = True
+MOUSE_PRESS_EVENT_TYPE = 2
+MOUSE_RELEASE_EVENT_TYPE = 3
+MOUSE_MOVE_EVENT_TYPE = 5
 
 
 def list_groups_linked_to_layer(layer_tree_root: QgsLayerTree, layer: QgsVectorLayer) -> list:
@@ -23,18 +26,29 @@ def list_groups_linked_to_layer(layer_tree_root: QgsLayerTree, layer: QgsVectorL
     layer: QgsVectorLayer
     """
     tree_layer = layer_tree_root.findLayer(layer.id())
-
-    groups = []
-    if tree_layer:
-
-        layer_parent = tree_layer.parent()
-        while True:
-            groups.append(layer_parent.name() or 'root')
-            layer_parent = layer_parent.parent()
-
-            if layer_parent is None:
+    if tree_layer is None:
+        # A mesma fonte de dados pode existir com outro id (outra instância da layer).
+        for node in layer_tree_root.findLayers():
+            other = node.layer()
+            if other is None:
+                continue
+            same_id = other.id() == layer.id()
+            same_source = (
+                other.name() == layer.name() and
+                other.dataProvider().dataSourceUri().split("|")[0] ==
+                layer.dataProvider().dataSourceUri().split("|")[0]
+            )
+            if same_id or same_source:
+                tree_layer = node
                 break
 
+    groups = []
+    # No PyQt6, `if qobject` pode ser falso para objetos SIP válidos; use is not None.
+    if tree_layer is not None:
+        layer_parent = tree_layer.parent()
+        while layer_parent is not None:
+            groups.append(layer_parent.name() or "root")
+            layer_parent = layer_parent.parent()
     return groups
 
 
@@ -133,6 +147,8 @@ def add_buttons_to_grid(grid, layer, signal):
     int_types = ["Integer", "Integer64", "Real"]
     flds1 = [field for field in layer.fields()]
     names1 = [f.name() for f in flds1]
+    if not names1:
+        return
     columns = 2
     rows = 99
     i = 0
@@ -141,6 +157,9 @@ def add_buttons_to_grid(grid, layer, signal):
     for row in range(int(rows)):
         if flag: break
         for column in range(columns):
+            if i >= list_size:
+                flag = True
+                break
             if flds1[i].typeName() in int_types:
                 push_column = CustomButtom(f'{names1[i]}', i)
                 push_column.signal_click.connect(signal)
@@ -1250,7 +1269,7 @@ class CustomVertexMarker(QgsVertexMarker):
         self.canvas.updateCanvasItemPositions()
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.MouseButton.RightButton:
             self.click_flag = True
             self.setColor(QColor(0, 255, 0))
             self.setIconSize(20)
@@ -1259,7 +1278,7 @@ class CustomVertexMarker(QgsVertexMarker):
             self.canvas.updateCanvasItemPositions()
 
     def mouseReleaseEvent(self, event):
-        if event.button() == Qt.RightButton:
+        if event.button() == Qt.MouseButton.RightButton:
             self.click_flag = False
             self.setColor(QColor(0, 255, 0))
             self.setIconSize(5)
@@ -1285,16 +1304,16 @@ class CanvasEventFilter(QObject):
 
     def eventFilter(self, obj, event):
 
-        if event.type() == QEvent.MouseButtonPress:
+        if int(event.type()) == MOUSE_PRESS_EVENT_TYPE:
             # forward event if marker is under current mouse position
             if self.marker.isUnderMouse():
                 self.marker.mousePressEvent(event)
 
-        elif event.type() == QEvent.MouseButtonRelease:
+        elif int(event.type()) == MOUSE_RELEASE_EVENT_TYPE:
             if self.marker.isUnderMouse():
                 self.marker.mouseReleaseEvent(event)
 
-        elif event.type() == QEvent.MouseMove:
+        elif int(event.type()) == MOUSE_MOVE_EVENT_TYPE:
             self.marker.mouseMoveEvent(event)
 
             # self.marker.exit(event)
@@ -1321,7 +1340,7 @@ class PolyMapTool(QgsMapToolEmitPoint):
 
         self.canvas.updateCanvasItemPositions()
 
-        if e.button() != Qt.LeftButton:
+        if e.button() != Qt.MouseButton.LeftButton:
             return
 
         point = self.toMapCoordinates(e.pos())

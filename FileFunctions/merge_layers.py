@@ -179,8 +179,8 @@ class Merge(QObject):
     def open_path(self):
         home = str(Path.home())
         dire = QFileDialog.getExistingDirectory(self.main, self.tr("Salvar"), home,
-                                                QFileDialog.ShowDirsOnly |
-                                                QFileDialog.DontResolveSymlinks)
+                                                QFileDialog.Option.ShowDirsOnly |
+                                                QFileDialog.Option.DontResolveSymlinks)
 
         self.main.currentPath_join.setText(dire)
 
@@ -270,7 +270,7 @@ class Merge(QObject):
 
                 for text in all_combo:
                     if text != custom_column.combobox.currentText() and text not in last_c:
-                        index = widget.combobox.findText(text, Qt.MatchFixedString)
+                        index = widget.combobox.findText(text, Qt.MatchFlag.MatchFixedString)
 
                         widget.combobox.setCurrentIndex(index)
                         break

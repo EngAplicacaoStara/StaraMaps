@@ -40,7 +40,7 @@ class Message(QFrame):
         self.ani.setDuration(10000)
         self.ani.setStartValue(1)
         self.ani.setEndValue(0)
-        self.ani.setEasingCurve(QEasingCurve.OutBack)
+        self.ani.setEasingCurve(QEasingCurve.Type.OutBack)
         self.setStyleSheet('''
              QFrame{
             background-color: transparent;
@@ -50,7 +50,7 @@ class Message(QFrame):
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(5, 5, 5, 5)
         self.label = QLabel()
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet('''
             QLabel{
                 background-color: rgba(255, 0, 0);
@@ -65,4 +65,4 @@ class Message(QFrame):
         self.ani.finished.connect(lambda: (
             self.deleteLater()
         ))
-        self.ani.start(QPropertyAnimation.DeleteWhenStopped)
+        self.ani.start(QPropertyAnimation.DeletionPolicy.DeleteWhenStopped)

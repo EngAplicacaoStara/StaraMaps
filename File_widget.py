@@ -16,7 +16,7 @@ from .qgisFuncs import Backup
 
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui/File_widget.ui'), resource_suffix='')
+    os.path.dirname(__file__), 'ui/File_widget.ui'))
 
 
 class BackupThread(QThread):
@@ -222,13 +222,13 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def do_animation(self):
         self.dragAnim = QPropertyAnimation(self, b"pos")
-        self.dragAnim.setEasingCurve(QEasingCurve.InOutCubic)
+        self.dragAnim.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.dragAnim.setStartValue(QPoint(self.geometry().x(), self.geometry().y()))
         self.dragAnim.setEndValue(QPoint(self.geometry().x() + 15, self.geometry().y()))
         self.dragAnim.setDuration(200)
 
         self.dragAnim2 = QPropertyAnimation(self, b"pos")
-        self.dragAnim2.setEasingCurve(QEasingCurve.InOutCubic)
+        self.dragAnim2.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.dragAnim2.setStartValue(QPoint(self.geometry().x() + 15, self.geometry().y()))
         self.dragAnim2.setEndValue(QPoint(self.geometry().x(), self.geometry().y()))
         self.dragAnim2.setDuration(200)
@@ -240,13 +240,13 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def do_animation_form_loop(self):
         self.dragAnim = QPropertyAnimation(self, b"pos")
-        self.dragAnim.setEasingCurve(QEasingCurve.OutCubic)
+        self.dragAnim.setEasingCurve(QEasingCurve.Type.OutCubic)
         self.dragAnim.setStartValue(QPoint(self.geometry().x(), self.geometry().y()))
         self.dragAnim.setEndValue(QPoint(self.geometry().x(), self.geometry().y() + 15))
         self.dragAnim.setDuration(800)
 
         self.dragAnim2 = QPropertyAnimation(self, b"pos")
-        self.dragAnim2.setEasingCurve(QEasingCurve.OutCubic)
+        self.dragAnim2.setEasingCurve(QEasingCurve.Type.OutCubic)
         self.dragAnim2.setStartValue(QPoint(self.geometry().x(), self.geometry().y() + 15))
         self.dragAnim2.setEndValue(QPoint(self.geometry().x(), self.geometry().y()))
         self.dragAnim2.setDuration(1000)
@@ -254,7 +254,7 @@ class FileWidget(QtWidgets.QWidget, FORM_CLASS):
         self.sequential = QSequentialAnimationGroup()
         self.sequential.addAnimation(self.dragAnim)
         self.sequential.addAnimation(self.dragAnim2)
-        self.sequential.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
+        self.sequential.start(QtCore.QAbstractAnimation.DeletionPolicy.DeleteWhenStopped)
 
     def remove(self):
 
